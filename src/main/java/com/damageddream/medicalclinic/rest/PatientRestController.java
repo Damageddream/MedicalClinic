@@ -1,6 +1,7 @@
 package com.damageddream.medicalclinic.rest;
 
 import com.damageddream.medicalclinic.entity.Patient;
+import com.damageddream.medicalclinic.exceptions.PatientNotFoundException;
 import com.damageddream.medicalclinic.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,7 @@ public class PatientRestController {
     public Patient getPatient(@PathVariable String patientEmail) {
         Patient thePatient = patientService.findByEmail(patientEmail);
         if(thePatient == null){
-            throw new RuntimeException("Patient not found - "+patientEmail);
+            throw new PatientNotFoundException("Patient not found - "+patientEmail);
         }
         return  thePatient;
     }
@@ -40,7 +41,7 @@ public class PatientRestController {
     public Patient updatePatient(@PathVariable String patientEmail, @RequestBody Patient patient) {
         Patient thePatient = patientService.update(patientEmail, patient);
         if(thePatient == null){
-            throw new RuntimeException("Patient not found - "+patientEmail);
+            throw new PatientNotFoundException("Patient not found - "+patientEmail);
         }
         return thePatient;
     }
@@ -49,7 +50,7 @@ public class PatientRestController {
     public Patient deletePatient(@PathVariable String patientEmail) {
         Patient thePatient = patientService.delete(patientEmail);
         if(thePatient == null){
-            throw new RuntimeException("Patient not found - "+patientEmail);
+            throw new PatientNotFoundException("Patient not found - "+patientEmail);
         }
         return thePatient;
     }
