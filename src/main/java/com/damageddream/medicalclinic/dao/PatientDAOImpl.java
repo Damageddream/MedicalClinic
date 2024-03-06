@@ -39,4 +39,5 @@ public class PatientDAOImpl implements PatientDAO{
         db.getPatients().remove(patient);
         return patient;
     }
+
 }

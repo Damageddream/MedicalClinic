@@ -1,5 +1,6 @@
 package com.damageddream.medicalclinic.rest;
 
+import com.damageddream.medicalclinic.entity.ChangePasswordCommand;
 import com.damageddream.medicalclinic.entity.Patient;
 import com.damageddream.medicalclinic.service.PatientService;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,11 @@ public class PatientRestController {
     @PutMapping("/{patientEmail}")
     public Patient updatePatient(@PathVariable String patientEmail, @RequestBody Patient patient) {
         return patientService.update(patientEmail, patient);
+    }
+
+    @PatchMapping("/{patientEmail}")
+    public Patient updatePassword(@PathVariable String patientEmail, @RequestBody ChangePasswordCommand password) {
+        return patientService.editPassword(password, patientEmail);
     }
 
     @DeleteMapping("/{patientEmail}")

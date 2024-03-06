@@ -1,5 +1,6 @@
 package com.damageddream.medicalclinic.service;
 
+import com.damageddream.medicalclinic.entity.ChangePasswordCommand;
 import com.damageddream.medicalclinic.entity.Patient;
 
 import java.util.List;
@@ -10,4 +11,6 @@ public interface PatientService {
     List<Patient> findAll();
     Patient update(String email, Patient patient);
     Patient delete(String email);
+
+    Patient editPassword(ChangePasswordCommand password, String email);
 }
