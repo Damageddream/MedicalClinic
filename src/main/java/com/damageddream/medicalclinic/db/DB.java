@@ -12,6 +12,7 @@ import java.util.List;
 @Repository
 public class DB {
     @Getter  private final List<Patient> patients = createPatients();
+
     private List<Patient> createPatients(){
 
         List<Patient> patientList = new ArrayList<>();

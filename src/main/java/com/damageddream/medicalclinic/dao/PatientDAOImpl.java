@@ -5,6 +5,7 @@ import com.damageddream.medicalclinic.entity.Patient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,10 +31,8 @@ public class PatientDAOImpl implements PatientDAO{
 
     @Override
     public List<Patient> findAll() {
-        return db.getPatients();
+        return new ArrayList<>(db.getPatients());
     }
-
-
 
     @Override
     public Patient delete(Patient patient) {
