@@ -1,7 +1,6 @@
 package com.damageddream.medicalclinic.db;
 
 import com.damageddream.medicalclinic.entity.Patient;
-import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;

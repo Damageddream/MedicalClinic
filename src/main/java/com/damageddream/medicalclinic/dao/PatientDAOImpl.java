@@ -2,7 +2,6 @@ package com.damageddream.medicalclinic.dao;
 
 import com.damageddream.medicalclinic.db.DB;
 import com.damageddream.medicalclinic.entity.Patient;
-import com.damageddream.medicalclinic.exceptions.PatientNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -34,19 +33,11 @@ public class PatientDAOImpl implements PatientDAO{
         return db.getPatients();
     }
 
-    @Override
-    public Patient update(String email, Patient patient) {
-        var thePatient = findByEmail(email)
-                .orElseThrow(()-> new PatientNotFoundException("Patient with given mail does not exist"));;
-        thePatient.update(patient);
-        return patient;
-    }
+
 
     @Override
-    public Patient delete(String email) {
-        var thePatient = findByEmail(email)
-                .orElseThrow(()-> new PatientNotFoundException("Patient with given mail does not exist"));;
-        db.getPatients().remove(thePatient);
-        return thePatient;
+    public Patient delete(Patient patient) {
+        db.getPatients().remove(patient);
+        return patient;
     }
 }

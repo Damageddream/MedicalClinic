@@ -27,7 +27,7 @@ public class PatientServiceImpl implements PatientService{
     @Override
     public Patient findByEmail(String email) {
         return patientDAO.findByEmail(email)
-                .orElseThrow(()-> new PatientNotFoundException("Patient with given mail does not exist"));
+                .orElseThrow(()-> new PatientNotFoundException("Patinet not found"));
     }
 
     @Override
@@ -37,13 +37,19 @@ public class PatientServiceImpl implements PatientService{
 
     @Override
     public Patient update(String email, Patient patient) {
+        var toEdit =patientDAO.findByEmail(email)
+                        .orElseThrow(()-> new PatientNotFoundException("Patinet not found"));
         validateEditPatientData(email, patient);
-        return patientDAO.update(email,patient);
+        toEdit.update(patient);
+        return toEdit;
     }
 
     @Override
     public Patient delete(String email) {
-        return patientDAO.delete(email);
+        var existingPatient = patientDAO.findByEmail(email)
+                .orElseThrow(() -> new PatientNotFoundException("Patient not found"));
+        patientDAO.delete(existingPatient);
+        return existingPatient;
     }
 
     private void validateEditPatientData(String email, Patient newPatientData){

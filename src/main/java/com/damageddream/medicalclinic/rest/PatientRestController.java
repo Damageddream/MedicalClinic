@@ -1,10 +1,8 @@
 package com.damageddream.medicalclinic.rest;
 
 import com.damageddream.medicalclinic.entity.Patient;
-import com.damageddream.medicalclinic.exceptions.PatientNotFoundException;
 import com.damageddream.medicalclinic.service.PatientService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

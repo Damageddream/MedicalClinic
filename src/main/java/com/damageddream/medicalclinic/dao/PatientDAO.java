@@ -9,7 +9,6 @@ public interface PatientDAO {
     Patient save(Patient patient);
     Optional<Patient> findByEmail(String email);
     List<Patient> findAll();
-    Patient update(String email, Patient patient);
-    Patient delete(String email);
+    Patient delete(Patient patient);
 
 }
