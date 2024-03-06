@@ -1,16 +1,20 @@
 package com.damageddream.medicalclinic.dao;
 
-import com.damageddream.medicalclinic.entity.DB;
+import com.damageddream.medicalclinic.db.DB;
 import com.damageddream.medicalclinic.entity.Patient;
+import com.damageddream.medicalclinic.exceptions.PatientNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Repository
+@RequiredArgsConstructor
 public class PatientDAOImpl implements PatientDAO{
 
-    private final DB db = new DB();
+    private final DB db;
 
     @Override
     public Patient save(Patient patient) {
@@ -19,16 +23,10 @@ public class PatientDAOImpl implements PatientDAO{
     }
 
     @Override
-    public Patient findByEmail(String email) {
-        List<Patient> filteredPatients = db
-                .getPatients()
-                .stream()
-                .filter(patient -> patient.getEmail().equals(email))
-                .toList();
-        if(filteredPatients.isEmpty()){
-           return null;
-        }
-        return filteredPatients.get(0);
+    public Optional<Patient> findByEmail(String email) {
+        return db.getPatients().stream()
+                .filter(patient -> patient.getEmail() != null && patient.getEmail().equals(email))
+                .findFirst();
     }
 
     @Override
@@ -38,21 +36,16 @@ public class PatientDAOImpl implements PatientDAO{
 
     @Override
     public Patient update(String email, Patient patient) {
-        Patient thePatient = findByEmail(email);
-        if(thePatient == null){
-            return null;
-        }
-        int index = db.getPatients().indexOf(thePatient);
-        db.getPatients().set(index, patient);
+        var thePatient = findByEmail(email)
+                .orElseThrow(()-> new PatientNotFoundException("Patient with given mail does not exist"));;
+        thePatient.update(patient);
         return patient;
     }
 
     @Override
     public Patient delete(String email) {
-        Patient thePatient = findByEmail(email);
-        if(thePatient == null){
-            return null;
-        }
+        var thePatient = findByEmail(email)
+                .orElseThrow(()-> new PatientNotFoundException("Patient with given mail does not exist"));;
         db.getPatients().remove(thePatient);
         return thePatient;
     }

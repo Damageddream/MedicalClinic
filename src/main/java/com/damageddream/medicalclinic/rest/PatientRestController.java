@@ -3,55 +3,41 @@ package com.damageddream.medicalclinic.rest;
 import com.damageddream.medicalclinic.entity.Patient;
 import com.damageddream.medicalclinic.exceptions.PatientNotFoundException;
 import com.damageddream.medicalclinic.service.PatientService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
+@RequestMapping("/patients")
 public class PatientRestController {
-    private PatientService patientService;
 
-    @Autowired
-    public PatientRestController(PatientService patientService) {
-        this.patientService =patientService;
-    }
+    private final PatientService patientService;
 
-        @GetMapping("/patients")
+    @GetMapping
     public List<Patient> findAll(){
         return patientService.findAll();
     }
 
-    @GetMapping("/patients/{patientEmail}")
+    @GetMapping("/{patientEmail}")
     public Patient getPatient(@PathVariable String patientEmail) {
-        Patient thePatient = patientService.findByEmail(patientEmail);
-        if(thePatient == null){
-            throw new PatientNotFoundException("Patient not found - "+patientEmail);
-        }
-        return  thePatient;
+        return patientService.findByEmail(patientEmail);
     }
 
-    @PostMapping("/patients")
+    @PostMapping
     public Patient addPatient(@RequestBody Patient patient) {
-        Patient thePatient = patientService.save(patient);
-        return thePatient;
+        return patientService.save(patient);
     }
 
-    @PutMapping("/patients/{patientEmail}")
+    @PutMapping("/{patientEmail}")
     public Patient updatePatient(@PathVariable String patientEmail, @RequestBody Patient patient) {
-        Patient thePatient = patientService.update(patientEmail, patient);
-        if(thePatient == null){
-            throw new PatientNotFoundException("Patient not found - "+patientEmail);
-        }
-        return thePatient;
+        return patientService.update(patientEmail, patient);
     }
 
-    @DeleteMapping("/patients/{patientEmail}")
+    @DeleteMapping("/{patientEmail}")
     public Patient deletePatient(@PathVariable String patientEmail) {
-        Patient thePatient = patientService.delete(patientEmail);
-        if(thePatient == null){
-            throw new PatientNotFoundException("Patient not found - "+patientEmail);
-        }
-        return thePatient;
+        return patientService.delete(patientEmail);
     }
 }
