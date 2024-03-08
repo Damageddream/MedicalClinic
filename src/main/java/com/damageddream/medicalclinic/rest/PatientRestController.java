@@ -2,6 +2,7 @@ package com.damageddream.medicalclinic.rest;
 
 import com.damageddream.medicalclinic.entity.ChangePasswordCommand;
 import com.damageddream.medicalclinic.entity.Patient;
+import com.damageddream.medicalclinic.dto.PatientCreateDTO;
 import com.damageddream.medicalclinic.service.PatientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -26,12 +27,12 @@ public class PatientRestController {
     }
 
     @PostMapping
-    public Patient addPatient(@RequestBody Patient patient) {
+    public Patient addPatient(@RequestBody PatientCreateDTO patient) {
         return patientService.save(patient);
     }
 
     @PutMapping("/{patientEmail}")
-    public Patient updatePatient(@PathVariable String patientEmail, @RequestBody Patient patient) {
+    public Patient updatePatient(@PathVariable String patientEmail, @RequestBody PatientCreateDTO patient) {
         return patientService.update(patientEmail, patient);
     }
 

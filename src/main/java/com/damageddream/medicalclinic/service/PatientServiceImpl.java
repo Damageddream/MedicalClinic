@@ -3,6 +3,7 @@ package com.damageddream.medicalclinic.service;
 import com.damageddream.medicalclinic.dao.PatientDAO;
 import com.damageddream.medicalclinic.entity.ChangePasswordCommand;
 import com.damageddream.medicalclinic.entity.Patient;
+import com.damageddream.medicalclinic.dto.PatientCreateDTO;
 import com.damageddream.medicalclinic.exception.EmailAlreadyExistsException;
 import com.damageddream.medicalclinic.exception.PatientNotFoundException;
 import com.damageddream.medicalclinic.validation.DataValidator;
@@ -20,14 +21,13 @@ public class PatientServiceImpl implements PatientService {
     private final DataValidator dataValidator;
 
     @Override
-    public Patient save(Patient patient) {
+    public Patient save(PatientCreateDTO patient) {
         var existingPatient = patientDAO.findByEmail(patient.getEmail());
         if (existingPatient.isPresent()) {
-            //throw new EmailAlreadyExistsException("Patient with that email already exists");
-            throw new IllegalArgumentException("test");
-
+            throw new EmailAlreadyExistsException("Patient with that email already exists");
         }
-        return patientDAO.save(patient);
+        Patient newPatient = patient.mappToPatient();
+        return patientDAO.save(newPatient);
     }
 
     @Override
@@ -42,11 +42,12 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public Patient update(String email, Patient patient) {
+    public Patient update(String email, PatientCreateDTO patient) {
         var toEdit = patientDAO.findByEmail(email)
                 .orElseThrow(() -> new PatientNotFoundException("Patinet not found"));
-        dataValidator.validateEditPatientData(email, patient, toEdit);
-        toEdit.update(patient);
+        Patient newPatient = patient.mappToPatient();
+        dataValidator.validateEditPatientData(email, newPatient, toEdit);
+        toEdit.update(newPatient);
         return toEdit;
     }
 
