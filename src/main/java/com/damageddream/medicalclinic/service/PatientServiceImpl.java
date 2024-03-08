@@ -23,7 +23,8 @@ public class PatientServiceImpl implements PatientService {
     public Patient save(Patient patient) {
         var existingPatient = patientDAO.findByEmail(patient.getEmail());
         if (existingPatient.isPresent()) {
-            throw new EmailAlreadyExistsException("Patient with that email already exists");
+            //throw new EmailAlreadyExistsException("Patient with that email already exists");
+            throw new IllegalArgumentException("test");
 
         }
         return patientDAO.save(patient);
