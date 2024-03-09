@@ -1,8 +1,8 @@
 package com.damageddream.medicalclinic.rest;
 
+import com.damageddream.medicalclinic.dto.PatientGetDTO;
 import com.damageddream.medicalclinic.entity.ChangePasswordCommand;
-import com.damageddream.medicalclinic.entity.Patient;
-import com.damageddream.medicalclinic.dto.PatientCreateDTO;
+import com.damageddream.medicalclinic.dto.PatientCreateUpdateDTO;
 import com.damageddream.medicalclinic.service.PatientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -17,32 +17,32 @@ public class PatientRestController {
     private final PatientService patientService;
 
     @GetMapping
-    public List<Patient> findAll(){
+    public List<PatientGetDTO> findAll(){
         return patientService.findAll();
     }
 
     @GetMapping("/{patientEmail}")
-    public Patient getPatient(@PathVariable String patientEmail) {
+    public PatientGetDTO getPatient(@PathVariable String patientEmail) {
         return patientService.findByEmail(patientEmail);
     }
 
     @PostMapping
-    public Patient addPatient(@RequestBody PatientCreateDTO patient) {
+    public PatientGetDTO addPatient(@RequestBody PatientCreateUpdateDTO patient) {
         return patientService.save(patient);
     }
 
     @PutMapping("/{patientEmail}")
-    public Patient updatePatient(@PathVariable String patientEmail, @RequestBody PatientCreateDTO patient) {
+    public PatientGetDTO updatePatient(@PathVariable String patientEmail, @RequestBody PatientCreateUpdateDTO patient) {
         return patientService.update(patientEmail, patient);
     }
 
     @PatchMapping("/{patientEmail}")
-    public Patient updatePassword(@PathVariable String patientEmail, @RequestBody ChangePasswordCommand password) {
+    public PatientGetDTO updatePassword(@PathVariable String patientEmail, @RequestBody ChangePasswordCommand password) {
         return patientService.editPassword(password, patientEmail);
     }
 
     @DeleteMapping("/{patientEmail}")
-    public Patient deletePatient(@PathVariable String patientEmail) {
+    public PatientGetDTO deletePatient(@PathVariable String patientEmail) {
         return patientService.delete(patientEmail);
     }
 }

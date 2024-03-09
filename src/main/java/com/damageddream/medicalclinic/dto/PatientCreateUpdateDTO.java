@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 @Getter
 @RequiredArgsConstructor
-public class PatientCreateDTO {
+public class PatientCreateUpdateDTO {
     private final String email;
     private final String password;
     private final String idCardNo;

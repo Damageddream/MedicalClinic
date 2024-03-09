@@ -1,5 +1,6 @@
 package com.damageddream.medicalclinic.entity;
 
+import com.damageddream.medicalclinic.dto.PatientCreateUpdateDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -16,9 +17,8 @@ public class Patient {
     private String phoneNumber;
     private LocalDate birthday;
 
-    public void update(Patient newPatientData) {
+    public void update(PatientCreateUpdateDTO newPatientData) {
         this.email = newPatientData.getEmail();
-        this.idCardNo = newPatientData.getIdCardNo();
         this.firstName = newPatientData.getFirstName();
         this.lastName = newPatientData.getLastName();
         this.password = newPatientData.getPassword();

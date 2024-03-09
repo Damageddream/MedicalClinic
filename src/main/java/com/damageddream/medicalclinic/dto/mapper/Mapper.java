@@ -1,6 +1,6 @@
 package com.damageddream.medicalclinic.dto.mapper;
 
-import com.damageddream.medicalclinic.dto.PatientCreateDTO;
+import com.damageddream.medicalclinic.dto.PatientCreateUpdateDTO;
 import com.damageddream.medicalclinic.dto.PatientGetDTO;
 import com.damageddream.medicalclinic.entity.Patient;
 import lombok.NoArgsConstructor;
@@ -19,7 +19,7 @@ public class Mapper {
                 patient.getBirthday());
     }
 
-    public Patient fromDTOcreate(PatientCreateDTO patientCreateData) {
+    public Patient fromDTOcreate(PatientCreateUpdateDTO patientCreateData) {
         return new Patient(
                 patientCreateData.getEmail(),
                 patientCreateData.getPassword(),
@@ -30,8 +30,5 @@ public class Mapper {
                 patientCreateData.getBirthday()
         );
     }
-
-    // add rest
-
 
 }
