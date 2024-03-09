@@ -3,6 +3,7 @@ package com.damageddream.medicalclinic.service;
 import com.damageddream.medicalclinic.dao.PatientDAO;
 import com.damageddream.medicalclinic.dto.PatientGetDTO;
 import com.damageddream.medicalclinic.dto.mapper.Mapper;
+import com.damageddream.medicalclinic.dto.mapper.PatientMapper;
 import com.damageddream.medicalclinic.entity.ChangePasswordCommand;
 import com.damageddream.medicalclinic.entity.Patient;
 import com.damageddream.medicalclinic.dto.PatientCreateUpdateDTO;
@@ -21,7 +22,7 @@ public class PatientServiceImpl implements PatientService {
 
     private final PatientDAO patientDAO;
     private final DataValidator dataValidator;
-    private final Mapper mapper;
+    private final PatientMapper patientMapper;
 
     @Override
     public PatientGetDTO save(PatientCreateUpdateDTO patient) {
@@ -29,24 +30,23 @@ public class PatientServiceImpl implements PatientService {
         if (existingPatient.isPresent()) {
             throw new EmailAlreadyExistsException("Patient with that email already exists");
         }
-        Patient newPatient = mapper.fromDTOcreate(patient);
+        Patient newPatient = patientMapper.patentCreateUpdateDTOToPatient(patient);
         patientDAO.save(newPatient);
-        return mapper.toDTOget(newPatient);
+        return patientMapper.patientToPatientGetDTO(newPatient);
     }
 
     @Override
     public PatientGetDTO findByEmail(String email) {
         Patient patient = patientDAO.findByEmail(email)
                 .orElseThrow(() -> new PatientNotFoundException("Patient not found"));
-        return mapper.toDTOget(patient);
+        return patientMapper.patientToPatientGetDTO(patient);
     }
 
     @Override
     public List<PatientGetDTO> findAll() {
-
         List<Patient> patients = patientDAO.findAll();
         return patients.stream()
-                .map(mapper::toDTOget)
+                .map(patientMapper::patientToPatientGetDTO)
                 .toList();
     }
 
@@ -56,7 +56,7 @@ public class PatientServiceImpl implements PatientService {
                 .orElseThrow(() -> new PatientNotFoundException("Patient not found"));
         dataValidator.validateEditPatientData(email, patient, toEdit);
         toEdit.update(patient);
-        return mapper.toDTOget(toEdit);
+        return patientMapper.patientToPatientGetDTO(toEdit);
     }
 
 
@@ -65,14 +65,14 @@ public class PatientServiceImpl implements PatientService {
         var existingPatient = patientDAO.findByEmail(email)
                 .orElseThrow(() -> new PatientNotFoundException("Patient not found"));
         patientDAO.delete(existingPatient);
-        return mapper.toDTOget(existingPatient);
+        return patientMapper.patientToPatientGetDTO(existingPatient);
     }
 
     @Override
     public PatientGetDTO editPassword(ChangePasswordCommand password, String email) {
         var toEdit = patientDAO.findByEmail(email).orElseThrow(() -> new PatientNotFoundException("Patient not found"));
         toEdit.setPassword(password.getPassword());
-        return mapper.toDTOget(toEdit);
+        return patientMapper.patientToPatientGetDTO(toEdit);
     }
 
 }
