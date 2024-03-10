@@ -1,11 +1,11 @@
 package com.damageddream.medicalclinic.validation;
 
-import com.damageddream.medicalclinic.dao.PatientDAO;
 import com.damageddream.medicalclinic.dto.PatientCreateUpdateDTO;
 import com.damageddream.medicalclinic.entity.Patient;
 import com.damageddream.medicalclinic.exception.EmailAlreadyExistsException;
 import com.damageddream.medicalclinic.exception.ForbiddenidCardNoChangeException;
 import com.damageddream.medicalclinic.exception.PatientFieldNullException;
+import com.damageddream.medicalclinic.repository.PatientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class DataValidator {
 
-    private final PatientDAO patientDAO;
+    private final PatientRepository patientRepository;
     public void validateEditPatientData(String email, PatientCreateUpdateDTO newPatientData, Patient patientToEdit){
         validateIfEmailIsAvailable(email, newPatientData);
         validateIfIdCardNoIsChanged(patientToEdit, newPatientData);
@@ -22,7 +22,7 @@ public class DataValidator {
 
     private void validateIfEmailIsAvailable(String email, PatientCreateUpdateDTO newPatientData){
         if (!email.equalsIgnoreCase(newPatientData.getEmail())) {
-            var patient = patientDAO.findByEmail(newPatientData.getEmail());
+            var patient = patientRepository.findByEmail(newPatientData.getEmail());
             if (patient.isPresent()) {
                 throw new EmailAlreadyExistsException("New email is not available.");
             }

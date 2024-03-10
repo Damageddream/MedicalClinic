@@ -1,14 +1,19 @@
 package com.damageddream.medicalclinic.entity;
 
 import com.damageddream.medicalclinic.dto.PatientCreateUpdateDTO;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDate;
-
+@Entity
 @Data
 @AllArgsConstructor
 public class Patient {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false)
+    private Long id;
     private String email;
     private String password;
     private String idCardNo;

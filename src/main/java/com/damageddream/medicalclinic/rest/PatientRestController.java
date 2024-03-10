@@ -5,6 +5,7 @@ import com.damageddream.medicalclinic.entity.ChangePasswordCommand;
 import com.damageddream.medicalclinic.dto.PatientCreateUpdateDTO;
 import com.damageddream.medicalclinic.service.PatientService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,6 +28,7 @@ public class PatientRestController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public PatientGetDTO addPatient(@RequestBody PatientCreateUpdateDTO patient) {
         return patientService.save(patient);
     }

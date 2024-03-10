@@ -1,14 +1,13 @@
 package com.damageddream.medicalclinic.service;
 
-import com.damageddream.medicalclinic.dao.PatientDAO;
 import com.damageddream.medicalclinic.dto.PatientGetDTO;
-import com.damageddream.medicalclinic.dto.mapper.Mapper;
 import com.damageddream.medicalclinic.dto.mapper.PatientMapper;
 import com.damageddream.medicalclinic.entity.ChangePasswordCommand;
 import com.damageddream.medicalclinic.entity.Patient;
 import com.damageddream.medicalclinic.dto.PatientCreateUpdateDTO;
 import com.damageddream.medicalclinic.exception.EmailAlreadyExistsException;
 import com.damageddream.medicalclinic.exception.PatientNotFoundException;
+import com.damageddream.medicalclinic.repository.PatientRepository;
 import com.damageddream.medicalclinic.validation.DataValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,31 +19,32 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PatientServiceImpl implements PatientService {
 
-    private final PatientDAO patientDAO;
+    //clean nazwy
     private final DataValidator dataValidator;
     private final PatientMapper patientMapper;
+    private final PatientRepository patientRepository;
 
     @Override
     public PatientGetDTO save(PatientCreateUpdateDTO patient) {
-        var existingPatient = patientDAO.findByEmail(patient.getEmail());
+        var existingPatient = patientRepository.findByEmail(patient.getEmail());
         if (existingPatient.isPresent()) {
             throw new EmailAlreadyExistsException("Patient with that email already exists");
         }
         Patient newPatient = patientMapper.patentCreateUpdateDTOToPatient(patient);
-        patientDAO.save(newPatient);
+        patientRepository.save(newPatient);
         return patientMapper.patientToPatientGetDTO(newPatient);
     }
 
     @Override
     public PatientGetDTO findByEmail(String email) {
-        Patient patient = patientDAO.findByEmail(email)
+        Patient patient = patientRepository.findByEmail(email)
                 .orElseThrow(() -> new PatientNotFoundException("Patient not found"));
         return patientMapper.patientToPatientGetDTO(patient);
     }
 
     @Override
     public List<PatientGetDTO> findAll() {
-        List<Patient> patients = patientDAO.findAll();
+        List<Patient> patients = patientRepository.findAll();
         return patients.stream()
                 .map(patientMapper::patientToPatientGetDTO)
                 .toList();
@@ -52,7 +52,7 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public PatientGetDTO update(String email, PatientCreateUpdateDTO patient) {
-        var toEdit = patientDAO.findByEmail(email)
+        var toEdit = patientRepository.findByEmail(email)
                 .orElseThrow(() -> new PatientNotFoundException("Patient not found"));
         dataValidator.validateEditPatientData(email, patient, toEdit);
         toEdit.update(patient);
@@ -62,15 +62,15 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public PatientGetDTO delete(String email) {
-        var existingPatient = patientDAO.findByEmail(email)
+        var existingPatient = patientRepository.findByEmail(email)
                 .orElseThrow(() -> new PatientNotFoundException("Patient not found"));
-        patientDAO.delete(existingPatient);
+        patientRepository.delete(existingPatient);
         return patientMapper.patientToPatientGetDTO(existingPatient);
     }
 
     @Override
     public PatientGetDTO editPassword(ChangePasswordCommand password, String email) {
-        var toEdit = patientDAO.findByEmail(email).orElseThrow(() -> new PatientNotFoundException("Patient not found"));
+        var toEdit = patientRepository.findByEmail(email).orElseThrow(() -> new PatientNotFoundException("Patient not found"));
         toEdit.setPassword(password.getPassword());
         return patientMapper.patientToPatientGetDTO(toEdit);
     }
