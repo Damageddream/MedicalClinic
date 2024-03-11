@@ -1,11 +1,9 @@
 package com.damageddream.medicalclinic.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
 @NoArgsConstructor
-public class ChangePasswordCommand {
+    public class ChangePasswordCommand {
     private String password;
 }
