@@ -1,6 +1,6 @@
 package com.damageddream.medicalclinic.validation;
 
-import com.damageddream.medicalclinic.dto.PatientCreateUpdateDTO;
+import com.damageddream.medicalclinic.dto.NewPatientDTO;
 import com.damageddream.medicalclinic.entity.Patient;
 import com.damageddream.medicalclinic.exception.EmailAlreadyExistsException;
 import com.damageddream.medicalclinic.exception.ForbiddenidCardNoChangeException;
@@ -14,13 +14,13 @@ import org.springframework.stereotype.Component;
 public class DataValidator {
 
     private final PatientRepository patientRepository;
-    public void validateEditPatientData(String email, PatientCreateUpdateDTO newPatientData, Patient patientToEdit){
+    public void validateEditPatientData(String email, NewPatientDTO newPatientData, Patient patientToEdit){
         validateIfEmailIsAvailable(email, newPatientData);
         validateIfIdCardNoIsChanged(patientToEdit, newPatientData);
         validateIfAllNewPatientFieldsAreFilled(newPatientData);
     }
 
-    private void validateIfEmailIsAvailable(String email, PatientCreateUpdateDTO newPatientData){
+    private void validateIfEmailIsAvailable(String email, NewPatientDTO newPatientData){
         if (!email.equalsIgnoreCase(newPatientData.getEmail())) {
             var patient = patientRepository.findByEmail(newPatientData.getEmail());
             if (patient.isPresent()) {
@@ -29,13 +29,13 @@ public class DataValidator {
         }
     }
 
-    private void validateIfIdCardNoIsChanged(Patient patientToEdit, PatientCreateUpdateDTO newPatientData){
+    private void validateIfIdCardNoIsChanged(Patient patientToEdit, NewPatientDTO newPatientData){
         if(!patientToEdit.getIdCardNo().equals(newPatientData.getIdCardNo())){
             throw new ForbiddenidCardNoChangeException("Changes to Id Card No are forbidden");
         }
     }
 
-    private void validateIfAllNewPatientFieldsAreFilled(PatientCreateUpdateDTO newPatientData){
+    private void validateIfAllNewPatientFieldsAreFilled(NewPatientDTO newPatientData){
         if(newPatientData.getEmail() == null
                 || newPatientData.getPassword() == null
                 || newPatientData.getFirstName() == null

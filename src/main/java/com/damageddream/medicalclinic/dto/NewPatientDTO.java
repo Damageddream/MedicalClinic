@@ -4,10 +4,13 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
+
 @Getter
 @RequiredArgsConstructor
-public class PatientGetDTO {
+public class NewPatientDTO {
     private final String email;
+    private final String password;
+    private final String idCardNo;
     private final String firstName;
     private final String lastName;
     private final String phoneNumber;

@@ -59,8 +59,7 @@ public class PatientServiceExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     protected ResponseEntity<ErrorResponse> handleGlobalException(
             Exception ex) {
-        String messageOfResponse = "Something went wrong, we're working on it!";
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, messageOfResponse, LocalDateTime.now());
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), LocalDateTime.now());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 }

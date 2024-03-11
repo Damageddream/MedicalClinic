@@ -1,4 +1,4 @@
-package com.damageddream.medicalclinic.entity;
+package com.damageddream.medicalclinic.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
