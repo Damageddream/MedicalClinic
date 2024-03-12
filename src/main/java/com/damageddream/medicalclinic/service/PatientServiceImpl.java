@@ -11,6 +11,7 @@ import com.damageddream.medicalclinic.repository.PatientRepository;
 import com.damageddream.medicalclinic.validation.DataValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class PatientServiceImpl implements PatientService {
     private final PatientRepository patientRepository;
 
     @Override
+    @Transactional
     public PatientDTO save(NewPatientDTO patient) {
         var existingPatient = patientRepository.findByEmail(patient.getEmail());
         if (existingPatient.isPresent()) {
@@ -50,6 +52,7 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
+    @Transactional
     public PatientDTO update(String email, NewPatientDTO patient) {
         var toEdit = patientRepository.findByEmail(email)
                 .orElseThrow(() -> new PatientNotFoundException("Patient not found"));
@@ -61,6 +64,7 @@ public class PatientServiceImpl implements PatientService {
 
 
     @Override
+    @Transactional
     public PatientDTO delete(String email) {
         var existingPatient = patientRepository.findByEmail(email)
                 .orElseThrow(() -> new PatientNotFoundException("Patient not found"));
@@ -69,6 +73,7 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
+    @Transactional
     public PatientDTO editPassword(ChangePasswordCommand password, String email) {
         var toEdit = patientRepository.findByEmail(email).orElseThrow(() -> new PatientNotFoundException("Patient not found"));
         toEdit.setPassword(password.getPassword());

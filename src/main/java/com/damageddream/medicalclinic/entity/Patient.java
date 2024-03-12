@@ -24,5 +24,4 @@ public class Patient {
     private String lastName;
     private String phoneNumber;
     private LocalDate birthday;
-
 }
