@@ -80,5 +80,4 @@ public class PatientServiceImpl implements PatientService {
         patientRepository.save(toEdit);
         return patientMapper.fromPatient(toEdit);
     }
-
 }
