@@ -51,4 +51,13 @@ public class TestDataFactory {
         return DEFAULT_NEWPATIENTDTO;
     }
 
+    public static PatientDTO createPatientDTO(String email, String firstName) {
+        return PatientDTO.builder()
+                .email(email)
+                .firstName(firstName)
+                .lastName("GrabDTO")
+                .phoneNumber("222222")
+                .birthday(LocalDate.of(1902,02,02))
+                .build();
+    }
 }

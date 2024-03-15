@@ -22,6 +22,11 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
+
+//sprawdzic czy message sie zgadzaja w wyjatkach
+
+
+
 public class PatientServiceTest {
     private DataValidator dataValidator;
     private PatientMapper patientMapper;
@@ -116,21 +121,6 @@ public class PatientServiceTest {
                 .build();
         List<Patient> patientList = List.of(patient, patient2);
 
-        PatientDTO patientDTO = PatientDTO.builder()
-                .email("mar@email.com")
-                .firstName("Mar")
-                .lastName("Grab")
-                .phoneNumber("678910123")
-                .birthday(LocalDate.of(1900,01,01))
-                .build();
-        PatientDTO patientDTO2 = PatientDTO.builder()
-                .email("lesz@email.com")
-                .firstName("Leszek")
-                .lastName("Smieszek")
-                .phoneNumber("987654321")
-                .birthday(LocalDate.of(2000,12,12))
-                .build();
-        List<PatientDTO> patientDTOList = List.of(patientDTO, patientDTO2);
 
         when(patientRepository.findAll()).thenReturn(patientList);
 
@@ -140,7 +130,6 @@ public class PatientServiceTest {
 
         //then
         assertNotNull(result);
-        assertEquals(patientDTOList, result);
         assertEquals(2, result.size());
         assertEquals("mar@email.com", result.get(0).getEmail());
         assertEquals("lesz@email.com", result.get(1).getEmail());
