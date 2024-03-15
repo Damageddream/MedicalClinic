@@ -31,23 +31,23 @@ public class PatientServiceImpl implements PatientService {
         if (existingPatient.isPresent()) {
             throw new EmailAlreadyExistsException("Patient with that email already exists");
         }
-        Patient newPatient = patientMapper.fromPatientDTO(patient);
+        Patient newPatient = patientMapper.fromDTO(patient);
         patientRepository.save(newPatient);
-        return patientMapper.fromPatient(newPatient);
+        return patientMapper.toDTO(newPatient);
     }
 
     @Override
     public PatientDTO findByEmail(String email) {
         Patient patient = patientRepository.findByEmail(email)
                 .orElseThrow(() -> new PatientNotFoundException("Patient not found"));
-        return patientMapper.fromPatient(patient);
+        return patientMapper.toDTO(patient);
     }
 
     @Override
     public List<PatientDTO> findAll() {
         List<Patient> patients = patientRepository.findAll();
         return patients.stream()
-                .map(patientMapper::fromPatient)
+                .map(patientMapper::toDTO)
                 .toList();
     }
 
@@ -59,7 +59,7 @@ public class PatientServiceImpl implements PatientService {
         dataValidator.validateEditPatientData(email, patient, toEdit);
         patientMapper.updatePatientFromDTO(patient, toEdit);
         patientRepository.save(toEdit);
-        return patientMapper.fromPatient(toEdit);
+        return patientMapper.toDTO(toEdit);
     }
 
 
@@ -69,7 +69,7 @@ public class PatientServiceImpl implements PatientService {
         var existingPatient = patientRepository.findByEmail(email)
                 .orElseThrow(() -> new PatientNotFoundException("Patient not found"));
         patientRepository.delete(existingPatient);
-        return patientMapper.fromPatient(existingPatient);
+        return patientMapper.toDTO(existingPatient);
     }
 
     @Override
@@ -78,6 +78,6 @@ public class PatientServiceImpl implements PatientService {
         var toEdit = patientRepository.findByEmail(email).orElseThrow(() -> new PatientNotFoundException("Patient not found"));
         toEdit.setPassword(password.getPassword());
         patientRepository.save(toEdit);
-        return patientMapper.fromPatient(toEdit);
+        return patientMapper.toDTO(toEdit);
     }
 }

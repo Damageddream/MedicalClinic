@@ -8,7 +8,7 @@ import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface PatientMapper  {
-    PatientDTO fromPatient(Patient patient);
-    Patient fromPatientDTO(NewPatientDTO newPatientDTO);
+    PatientDTO toDTO(Patient patient);
+    Patient fromDTO(NewPatientDTO newPatientDTO);
     void updatePatientFromDTO(NewPatientDTO dto, @MappingTarget Patient patient);
 }

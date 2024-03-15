@@ -8,11 +8,14 @@ import com.damageddream.medicalclinic.entity.Patient;
 import com.damageddream.medicalclinic.exception.EmailAlreadyExistsException;
 import com.damageddream.medicalclinic.exception.PatientNotFoundException;
 import com.damageddream.medicalclinic.repository.PatientRepository;
+import com.damageddream.medicalclinic.util.TestDataFactory;
 import com.damageddream.medicalclinic.validation.DataValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
 import org.mockito.Mockito;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,7 +33,7 @@ public class PatientServiceTest {
     @BeforeEach
     void setup() {
         this.dataValidator = Mockito.mock(DataValidator.class);
-        this.patientMapper = Mockito.mock(PatientMapper.class);
+        this.patientMapper = Mappers.getMapper(PatientMapper.class);
         this.patientRepository = Mockito.mock(PatientRepository.class);
 
         this.patientService = new PatientServiceImpl(dataValidator, patientMapper, patientRepository);
@@ -38,207 +41,208 @@ public class PatientServiceTest {
 
     @Test
     void findPatientByEmail_PatientExists_PatientDTOReturned() {
-        Patient patient = Patient.builder()
-                .email("mail")
-                .firstName("Marcin")
-                .build();
-        PatientDTO patientDTO = PatientDTO.builder()
-                .email("mail")
-                .firstName("Marcin")
-                .build();
+        //given
+        String email = "mar@email.com";
+        Patient patient = TestDataFactory.getDefault_PATIENT();
 
+        when(patientRepository.findByEmail(email)).thenReturn(Optional.of(patient));
 
-        when(patientRepository.findByEmail("mail")).thenReturn(Optional.of(patient));
-        when(patientMapper.fromPatient(patient)).thenReturn(patientDTO);
+        //when
+        var result = patientService.findByEmail(email);
 
-        var result = patientService.findByEmail("mail");
-
+        //then
         assertNotNull(result);
-        assertEquals("mail", result.getEmail());
-        assertEquals("Marcin", result.getFirstName());
-
+        assertEquals(email, result.getEmail());
+        assertEquals("Mar", result.getFirstName());
+        assertEquals("Grab", result.getLastName());
+        assertEquals("678910123", result.getPhoneNumber());
+        assertEquals(LocalDate.of(1900,01,01), result.getBirthday());
     }
 
     @Test
     void findPatientByEmail_PatientNotExists_PatientNotFoundExceptionIsThrown() {
+        //given
         String email = "mail";
         when(patientRepository.findByEmail(email)).thenReturn(Optional.empty());
 
+        //then                                              //when
         assertThrows(PatientNotFoundException.class, ()-> patientService.findByEmail(email));
     }
 
     @Test
-    void savePatient_PatientNotInDb_PatientDtoReturned() {
-        PatientDTO patientDTO = PatientDTO.builder()
-                .email("mail")
-                .firstName("Marcin")
-                .build();
-        Patient patient = Patient.builder()
-                .email("mail")
-                .firstName("Marcin")
-                .build();
-        NewPatientDTO newPatientDTO = NewPatientDTO.builder()
-                .email("mail")
-                .firstName("Marcin")
-                .build();
+    void savePatient_PatientNotInDB_PatientDtoReturned() {
+        //given
+        String email = "marNewDto@email.com";
+        NewPatientDTO newPatientDTO = TestDataFactory.getDefault_NEWPATIENTDTO();
 
-        when(patientRepository.findByEmail("mail")).thenReturn(Optional.empty());
-        when(patientMapper.fromPatientDTO(newPatientDTO)).thenReturn(patient);
-        when(patientMapper.fromPatient(patient)).thenReturn(patientDTO);
+        when(patientRepository.findByEmail(email)).thenReturn(Optional.empty());
 
+        //when
         var result = patientService.save(newPatientDTO);
 
+        //then
         assertNotNull(result);
-        assertEquals("mail", result.getEmail());
-        assertEquals("Marcin", result.getFirstName());
+        assertEquals(email, result.getEmail());
+        assertEquals("MarNewDto", result.getFirstName());
+        assertEquals("GrabNewDto", result.getLastName());
+        assertEquals("333333333", result.getPhoneNumber());
+        assertEquals(LocalDate.of(1903,03,03), result.getBirthday());
     }
 
     @Test
-    void savePatient_PatientInDb_EmailAlreadyExistsExceptionIsThrown() {
-        Patient patient = Patient.builder()
-                .email("mail")
-                .firstName("Marcin")
-                .build();
-        NewPatientDTO newPatientDTO = NewPatientDTO.builder()
-                .email("mail")
-                .firstName("Marcin")
-                .build();
+    void savePatient_PatientInDB_EmailAlreadyExistsExceptionIsThrown() {
+        //given
+        Patient patient = TestDataFactory.getDefault_PATIENT();
+        NewPatientDTO newPatientDTO = TestDataFactory.getDefault_NEWPATIENTDTO();
 
-        when(patientRepository.findByEmail("mail")).thenReturn(Optional.of(patient));
+        when(patientRepository.findByEmail("marNewDto@email.com")).thenReturn(Optional.of(patient));
 
+        //then                                            //when
         assertThrows(EmailAlreadyExistsException.class, ()->patientService.save(newPatientDTO));
     }
     @Test
     void findAllPatients_PatientsExists_PatientDTOListReturned() {
-        Patient patient = Patient.builder()
-                .email("mail")
-                .firstName("Marcin")
-                .build();
+        //given
+        Patient patient = TestDataFactory.getDefault_PATIENT();
         Patient patient2 = Patient.builder()
-                .email("mail2")
+                .id(2L)
+                .idCardNo("999")
+                .password("passwordLesz")
+                .email("lesz@email.com")
                 .firstName("Leszek")
+                .lastName("Smieszek")
+                .phoneNumber("987654321")
+                .birthday(LocalDate.of(2000,12,12))
                 .build();
         List<Patient> patientList = List.of(patient, patient2);
 
         PatientDTO patientDTO = PatientDTO.builder()
-                .email("mail")
-                .firstName("Marcin")
+                .email("mar@email.com")
+                .firstName("Mar")
+                .lastName("Grab")
+                .phoneNumber("678910123")
+                .birthday(LocalDate.of(1900,01,01))
                 .build();
         PatientDTO patientDTO2 = PatientDTO.builder()
-                .email("mail2")
+                .email("lesz@email.com")
                 .firstName("Leszek")
+                .lastName("Smieszek")
+                .phoneNumber("987654321")
+                .birthday(LocalDate.of(2000,12,12))
                 .build();
         List<PatientDTO> patientDTOList = List.of(patientDTO, patientDTO2);
 
         when(patientRepository.findAll()).thenReturn(patientList);
-        when(patientMapper.fromPatient(patient)).thenReturn(patientDTO);
-        when(patientMapper.fromPatient(patient2)).thenReturn(patientDTO2);
 
+        //when
         var result = patientService.findAll();
+
+
+        //then
         assertNotNull(result);
         assertEquals(patientDTOList, result);
+        assertEquals(2, result.size());
+        assertEquals("mar@email.com", result.get(0).getEmail());
+        assertEquals("lesz@email.com", result.get(1).getEmail());
     }
 
     @Test
     void updatePatient_PatientExists_updatedPatientDTOReturned() {
-        String email = "mail";
-        NewPatientDTO patient = NewPatientDTO.builder()
-                .email(email)
-                .firstName("UpdatedName")
-                .build();
-
-        Patient existingPatient = Patient.builder()
-                .email(email)
-                .firstName("OldName")
-                .build();
-
-        PatientDTO expectedPatientDTO = PatientDTO.builder()
-                .email(email)
-                .firstName("UpdatedName")
-                .build();
+        //given
+        String email = "mar@email.com";
+        NewPatientDTO patient = TestDataFactory.getDefault_NEWPATIENTDTO();
+        Patient existingPatient = TestDataFactory.getDefault_PATIENT();
 
         when(patientRepository.findByEmail(email)).thenReturn(Optional.of(existingPatient));
-        when(patientMapper.fromPatient(existingPatient)).thenReturn(expectedPatientDTO);
 
+        //when
         var result = patientService.update(email, patient);
 
+        //then
         assertNotNull(result);
-        assertEquals(expectedPatientDTO,result);
+        assertEquals("MarNewDto", result.getFirstName());
+        assertEquals("GrabNewDto", result.getLastName());
+        assertEquals("marNewDto@email.com", result.getEmail());
+        assertEquals("333333333", result.getPhoneNumber());
+        assertEquals(LocalDate.of(1903,03,03), result.getBirthday());
     }
 
     @Test
     void updatePatient_PatientNotExists_PatientNotFoundExceptionIsThrown() {
+        //given
         String email = "mail";
-        NewPatientDTO patient = NewPatientDTO.builder()
-                .email(email)
-                .firstName("UpdatedName")
-                .build();
+        NewPatientDTO patient = TestDataFactory.getDefault_NEWPATIENTDTO();
+
         when(patientRepository.findByEmail(email)).thenReturn(Optional.empty());
 
+        //then                                       //when
         assertThrows(PatientNotFoundException.class, ()-> patientService.update(email, patient));
     }
 
     @Test
     void deletePatient_PatientExists_PatientIsDeletedAndDTOIsReturned() {
-
-        String email = "mail";
-        Patient patient = Patient.builder()
-                .email(email)
-                .build();
-        PatientDTO expectedPatientDTO = PatientDTO.builder()
-                .email(email)
-                .build();
+        //given
+        String email = "mar@email.com";
+        Patient patient = TestDataFactory.getDefault_PATIENT();
 
         when(patientRepository.findByEmail(email)).thenReturn(Optional.of(patient));
-        when(patientMapper.fromPatient(patient)).thenReturn(expectedPatientDTO);
 
+        //when
         PatientDTO result = patientService.delete(email);
 
+        //then
         assertNotNull(result);
-        assertEquals(expectedPatientDTO, result);
+        assertEquals(email, result.getEmail());
+        assertEquals("Mar", result.getFirstName());
+        assertEquals("Grab", result.getLastName());
+        assertEquals("678910123", result.getPhoneNumber());
+        assertEquals(LocalDate.of(1900,01,01), result.getBirthday());
 
     }
 
     @Test
     void deletePatient_PatientNotExists_PatientNotFoundExceptionIsThrown() {
+        //given
         String email = "mail";
         when(patientRepository.findByEmail(email)).thenReturn(Optional.empty());
 
+        //then                                         //when
         assertThrows(PatientNotFoundException.class, ()-> patientService.delete(email));
     }
 
     @Test
     void editPassword_PatientExists_PatientUpdatedAndDTOIsReturned() {
-
-        String email = "mail";
+        //given
+        String email = "mar@email.com";
         String newPassword = "newPassword";
         ChangePasswordCommand command = new ChangePasswordCommand(newPassword);
-        Patient patient = Patient.builder()
-                .email(email)
-                .build();
-        PatientDTO expectedPatientDTO = PatientDTO.builder()
-                .email(email)
-                .build();
+        Patient patient = TestDataFactory.getDefault_PATIENT();
 
         when(patientRepository.findByEmail(email)).thenReturn(Optional.of(patient));
-        when(patientMapper.fromPatient(patient)).thenReturn(expectedPatientDTO);
 
-
+        //when
         PatientDTO result = patientService.editPassword(command, email);
 
-
-        assertEquals(expectedPatientDTO, result);
+        //then
+        assertNotNull(result);
         assertEquals(newPassword, patient.getPassword());
+        assertEquals(email, result.getEmail());
+        assertEquals("Mar", result.getFirstName());
+        assertEquals("Grab", result.getLastName());
+        assertEquals("678910123", result.getPhoneNumber());
+        assertEquals(LocalDate.of(1900,01,01), result.getBirthday());
 
     }
 
     @Test
     void editPassword_PatientNotExists_PatientNotFoundExceptionIsThrown() {
+        //given
         String email = "mail";
         String newPassword = "newPassword";
         ChangePasswordCommand command = new ChangePasswordCommand(newPassword);
-        when(patientRepository.findByEmail(email)).thenReturn(Optional.empty());
 
+        when(patientRepository.findByEmail(email)).thenReturn(Optional.empty());
+        //then                                        //when
         assertThrows(PatientNotFoundException.class, ()-> patientService.editPassword(command, email));
     }
 
