@@ -1,5 +1,6 @@
 package com.damageddream.medicalclinic.rest;
 
+import com.damageddream.medicalclinic.dto.ChangePasswordCommand;
 import com.damageddream.medicalclinic.dto.NewPatientDTO;
 import com.damageddream.medicalclinic.dto.PatientDTO;
 import com.damageddream.medicalclinic.service.PatientService;
@@ -13,8 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
@@ -101,7 +102,7 @@ public class PatientRestControllerTest {
     }
 
     @Test
-    void updatePatient_patientInDb_returnsPatientDTO() throws Exception {
+    void putPatient_patientInDb_returnsPatientDTO() throws Exception {
         //given
         String email = "mar@email.com";
         NewPatientDTO newPatientDTO = TestDataFactory.getDefault_NEWPATIENTDTO();
@@ -121,4 +122,48 @@ public class PatientRestControllerTest {
                 .andExpect(jsonPath("$.email").value("marDTO@email.com"))
                 .andExpect(jsonPath("$.birthday").value("1902-02-02"));
     }
+
+    @Test
+    void deletePatient_patientExists_returnPatientDTO() throws Exception {
+        //given
+        String email = "mar@email.com";
+        PatientDTO patientDTO = TestDataFactory.getDefault_PATIENTDTO();
+
+        when(patientService.delete(email)).thenReturn(patientDTO);
+
+        //when then
+        mockMvc.perform(delete("/patients/{patientEmail}", email))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.firstName").value("MarDTO"))
+                .andExpect(jsonPath("$.lastName").value("GrabDTO"))
+                .andExpect(jsonPath("$.phoneNumber").value("222222"))
+                .andExpect(jsonPath("$.email").value("marDTO@email.com"))
+                .andExpect(jsonPath("$.birthday").value("1902-02-02"));
+    }
+
+    @Test
+    void patchPatientPassword_patientExists_returnPatientDTO() throws Exception {
+        //given
+        String email = "marDTO@email.com";
+        ChangePasswordCommand newPassword = new ChangePasswordCommand("newPassword");
+        PatientDTO patientDTO = TestDataFactory.getDefault_PATIENTDTO();
+
+        when(patientService.editPassword(newPassword, email)).thenReturn(patientDTO);
+
+        //when then
+        mockMvc.perform(patch("/patients/{patientEmail}", email)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(newPassword)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.firstName").value("MarDTO"))
+                .andExpect(jsonPath("$.lastName").value("GrabDTO"))
+                .andExpect(jsonPath("$.phoneNumber").value("222222"))
+                .andExpect(jsonPath("$.email").value("marDTO@email.com"))
+                .andExpect(jsonPath("$.birthday").value("1902-02-02"));
+
+    }
+
+
 }
