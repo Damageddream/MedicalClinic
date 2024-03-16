@@ -17,7 +17,7 @@ public class TestDataFactory {
             .password("password")
             .idCardNo("123456")
             .phoneNumber("678910123")
-            .birthday(LocalDate.of(1900,01,01))
+            .birthday(LocalDate.of(1900, 01, 01))
             .build();
     private static final PatientDTO DEFAULT_PATIENTDTO = PatientDTO
             .builder()
@@ -25,18 +25,18 @@ public class TestDataFactory {
             .firstName("MarDTO")
             .lastName("GrabDTO")
             .phoneNumber("222222")
-            .birthday(LocalDate.of(1902,02,02))
+            .birthday(LocalDate.of(1902, 02, 02))
             .build();
 
     private static final NewPatientDTO DEFAULT_NEWPATIENTDTO = NewPatientDTO
             .builder()
             .password("passNewDto")
-            .idCardNo("654321")
+            .idCardNo("123456")
             .email("marNewDto@email.com")
             .firstName("MarNewDto")
             .lastName("GrabNewDto")
             .phoneNumber("333333333")
-            .birthday(LocalDate.of(1903,03,03))
+            .birthday(LocalDate.of(1903, 03, 03))
             .build();
 
     public static Patient getDefault_PATIENT() {
@@ -47,7 +47,7 @@ public class TestDataFactory {
         return DEFAULT_PATIENTDTO;
     }
 
-    public static NewPatientDTO getDefault_NEWPATIENTDTO() {
+    public static NewPatientDTO getNewPatientDTO() {
         return DEFAULT_NEWPATIENTDTO;
     }
 
@@ -57,7 +57,34 @@ public class TestDataFactory {
                 .firstName(firstName)
                 .lastName("GrabDTO")
                 .phoneNumber("222222")
-                .birthday(LocalDate.of(1902,02,02))
+                .birthday(LocalDate.of(1902, 02, 02))
                 .build();
     }
+
+    public static Patient createPatient(String email, String firstName) {
+        return Patient
+                .builder()
+                .id(1L)
+                .firstName(firstName)
+                .lastName("Grab")
+                .email(email)
+                .password("password")
+                .idCardNo("123456")
+                .phoneNumber("678910123")
+                .birthday(LocalDate.of(1900, 01, 01))
+                .build();
+    }
+
+    public static NewPatientDTO createNewPatientDTO(String email, String firstName, String idCardNo) {
+        return NewPatientDTO.builder()
+                .password("passNewDto")
+                .idCardNo(idCardNo)
+                .email(email)
+                .firstName(firstName)
+                .lastName("GrabNewDto")
+                .phoneNumber("333333333")
+                .birthday(LocalDate.of(1903, 03, 03))
+                .build();
+    }
+
 }
