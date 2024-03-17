@@ -27,7 +27,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class PatientRestControllerTest {
 
-    //przerobić dto na 1 !!!!!!!!!!!!!!!!!!!!!!!!!!
     @Autowired
     private MockMvc mockMvc;
 
@@ -40,8 +39,10 @@ public class PatientRestControllerTest {
     void postPatient_EmailUnique_returnsPatientDTO() throws Exception {
 
         //given
-        NewPatientDTO newPatientDTO = TestDataFactory.getNewPatientDTO();
-        PatientDTO patientDTO = TestDataFactory.getDefault_PATIENTDTO();
+        NewPatientDTO newPatientDTO = TestDataFactory
+                .createNewPatientDTO("marNewDto@email.com", "MarNewDto", "654321");
+        PatientDTO patientDTO = TestDataFactory.createPatientDTO("marDTO@email.com", "MarDTO");
+
 
         when(patientService.save(newPatientDTO)).thenReturn(patientDTO);
 
@@ -65,7 +66,7 @@ public class PatientRestControllerTest {
     void getPatientByEmail_emailExists_returnsPatientDTO() throws Exception {
         //given
         String email = "mar@email.com";
-        PatientDTO patientDTO = TestDataFactory.getDefault_PATIENTDTO();
+        PatientDTO patientDTO = TestDataFactory.createPatientDTO("marDTO@email.com","MarDTO");
 
         when(patientService.findByEmail(email)).thenReturn(patientDTO);
 
@@ -85,7 +86,7 @@ public class PatientRestControllerTest {
     @Test
     void getAllPatients_patientsExists_returnPatientsDTOList() throws Exception {
         //given
-        PatientDTO patientDTOfirst = TestDataFactory.getDefault_PATIENTDTO();
+        PatientDTO patientDTOfirst = TestDataFactory.createPatientDTO("marDTO@email.com","MarDTO");
         PatientDTO patientDTOsecond = TestDataFactory.createPatientDTO("lesz@mail.com", "Leszek");
         List<PatientDTO> patientsDTO = List.of(patientDTOfirst, patientDTOsecond);
 
@@ -108,8 +109,9 @@ public class PatientRestControllerTest {
     void putPatient_patientInDb_returnsPatientDTO() throws Exception {
         //given
         String email = "mar@email.com";
-        NewPatientDTO newPatientDTO = TestDataFactory.getNewPatientDTO();
-        PatientDTO patientDTO = TestDataFactory.getDefault_PATIENTDTO();
+        NewPatientDTO newPatientDTO = TestDataFactory
+                .createNewPatientDTO("marNewDto@email.com", "MarNewDto", "654321");
+        PatientDTO patientDTO = TestDataFactory.createPatientDTO("marDTO@email.com","MarDTO");
 
         when(patientService.update(email, newPatientDTO)).thenReturn(patientDTO);
 
@@ -132,7 +134,7 @@ public class PatientRestControllerTest {
     void deletePatient_patientExists_returnPatientDTO() throws Exception {
         //given
         String email = "mar@email.com";
-        PatientDTO patientDTO = TestDataFactory.getDefault_PATIENTDTO();
+        PatientDTO patientDTO = TestDataFactory.createPatientDTO("marDTO@email.com","MarDTO");
 
         when(patientService.delete(email)).thenReturn(patientDTO);
 
@@ -154,7 +156,7 @@ public class PatientRestControllerTest {
         //given
         String email = "marDTO@email.com";
         ChangePasswordCommand newPassword = new ChangePasswordCommand("newPassword");
-        PatientDTO patientDTO = TestDataFactory.getDefault_PATIENTDTO();
+        PatientDTO patientDTO = TestDataFactory.createPatientDTO(email,"MarDTO");
 
         when(patientService.editPassword(newPassword, email)).thenReturn(patientDTO);
 

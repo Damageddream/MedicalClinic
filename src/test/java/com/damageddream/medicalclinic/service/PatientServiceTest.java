@@ -45,7 +45,7 @@ public class PatientServiceTest {
     void findPatientByEmail_PatientExists_PatientDTOReturned() {
         //given
         String email = "mar@email.com";
-        Patient patient = TestDataFactory.getDefault_PATIENT();
+        Patient patient = TestDataFactory.createPatient(email, "Mar");
 
         when(patientRepository.findByEmail(email)).thenReturn(Optional.of(patient));
 
@@ -81,7 +81,8 @@ public class PatientServiceTest {
     void savePatient_PatientNotInDB_PatientDtoReturned() {
         //given
         String email = "marNewDto@email.com";
-        NewPatientDTO newPatientDTO = TestDataFactory.getNewPatientDTO();
+        NewPatientDTO newPatientDTO = TestDataFactory
+                .createNewPatientDTO(email, "MarNewDto", "654321");
 
         when(patientRepository.findByEmail(email)).thenReturn(Optional.empty());
 
@@ -102,8 +103,9 @@ public class PatientServiceTest {
     @Test
     void savePatient_PatientInDB_EmailAlreadyExistsExceptionIsThrown() {
         //given
-        Patient patient = TestDataFactory.getDefault_PATIENT();
-        NewPatientDTO newPatientDTO = TestDataFactory.getNewPatientDTO();
+        Patient patient = TestDataFactory.createPatient("mar@email.com", "Mar");
+        NewPatientDTO newPatientDTO = TestDataFactory
+                .createNewPatientDTO("marNewDto@email.com", "MarNewDto", "654321");
 
         when(patientRepository.findByEmail("marNewDto@email.com")).thenReturn(Optional.of(patient));
 
@@ -117,7 +119,7 @@ public class PatientServiceTest {
     @Test
     void findAllPatients_PatientsExists_PatientDTOListReturned() {
         //given
-        Patient patient = TestDataFactory.getDefault_PATIENT();
+        Patient patient = TestDataFactory.createPatient("mar@email.com", "Mar");
         Patient patient2 = TestDataFactory.createPatient("lesz@email.com", "Leszek");
         List<Patient> patientList = List.of(patient, patient2);
 
@@ -139,8 +141,9 @@ public class PatientServiceTest {
     void updatePatient_PatientExists_updatedPatientDTOReturned() {
         //given
         String email = "mar@email.com";
-        NewPatientDTO patient = TestDataFactory.getNewPatientDTO();
-        Patient existingPatient = TestDataFactory.getDefault_PATIENT();
+        NewPatientDTO patient = TestDataFactory
+                .createNewPatientDTO("marNewDto@email.com", "MarNewDto", "654321");
+        Patient existingPatient = TestDataFactory.createPatient(email, "Mar");
 
         when(patientRepository.findByEmail(email)).thenReturn(Optional.of(existingPatient));
 
@@ -162,7 +165,8 @@ public class PatientServiceTest {
     void updatePatient_PatientNotExists_PatientNotFoundExceptionIsThrown() {
         //given
         String email = "mail";
-        NewPatientDTO patient = TestDataFactory.getNewPatientDTO();
+        NewPatientDTO patient = TestDataFactory
+                .createNewPatientDTO("marNewDto@email.com", "MarNewDto", "654321");
 
         when(patientRepository.findByEmail(email)).thenReturn(Optional.empty());
 
@@ -178,7 +182,7 @@ public class PatientServiceTest {
     void deletePatient_PatientExists_PatientIsDeletedAndDTOIsReturned() {
         //given
         String email = "mar@email.com";
-        Patient patient = TestDataFactory.getDefault_PATIENT();
+        Patient patient = TestDataFactory.createPatient(email, "Mar");
 
         when(patientRepository.findByEmail(email)).thenReturn(Optional.of(patient));
 
@@ -217,7 +221,7 @@ public class PatientServiceTest {
         String email = "mar@email.com";
         String newPassword = "newPassword";
         ChangePasswordCommand command = new ChangePasswordCommand(newPassword);
-        Patient patient = TestDataFactory.getDefault_PATIENT();
+        Patient patient = TestDataFactory.createPatient(email, "Mar");
 
         when(patientRepository.findByEmail(email)).thenReturn(Optional.of(patient));
 

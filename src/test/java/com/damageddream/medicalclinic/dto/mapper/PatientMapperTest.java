@@ -24,7 +24,7 @@ public class PatientMapperTest {
     @Test
     void fromPatient_ValidPatient_PatientDTOReturned() {
         //given
-        Patient patient = TestDataFactory.getDefault_PATIENT();
+        Patient patient = TestDataFactory.createPatient("mar@email.com", "Mar");
 
         //when
         var result = patientMapper.toDTO(patient);
@@ -42,7 +42,7 @@ public class PatientMapperTest {
     @Test
     void fromPatientDTO_ValidPatientDTO_PatientReturned() {
         //given
-        NewPatientDTO newPatientDTO = TestDataFactory.getNewPatientDTO();
+        NewPatientDTO newPatientDTO = TestDataFactory.createNewPatientDTO("marNewDto@email.com", "MarNewDto", "654321");
 
         //when
         var result = patientMapper.fromDTO(newPatientDTO);
@@ -61,8 +61,9 @@ public class PatientMapperTest {
     @Test
     void  updatePatientFromDTO_ValidPatientDTO_PatientUpdated () {
         //given
-        Patient existingPatient = TestDataFactory.getDefault_PATIENT();
-        NewPatientDTO updateDTO = TestDataFactory.getNewPatientDTO();
+        Patient existingPatient = TestDataFactory.createPatient("mar@email.com", "Mar");
+        NewPatientDTO updateDTO = TestDataFactory
+                .createNewPatientDTO("marNewDto@email.com", "MarNewDto", "654321");
 
         //when
         patientMapper.updatePatientFromDTO(updateDTO, existingPatient);

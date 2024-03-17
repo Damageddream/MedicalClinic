@@ -70,7 +70,8 @@ public class PatientIntegrationTest {
     @Test
     void postPatient_patientNotInDb_responsePatientDto() throws Exception {
         //given
-        NewPatientDTO patientDTO = TestDataFactory.getNewPatientDTO();
+        NewPatientDTO patientDTO = TestDataFactory
+                .createNewPatientDTO("marNewDto@email.com", "MarNewDto", "123456");
 
         //when then
         mockMvc.perform(post("/patients")
