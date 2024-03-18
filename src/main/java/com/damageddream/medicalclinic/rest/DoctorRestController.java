@@ -1,34 +1,41 @@
 package com.damageddream.medicalclinic.rest;
 
-import com.damageddream.medicalclinic.dto.GetFacilityIdCommand;
-import com.damageddream.medicalclinic.entity.Doctor;
-import com.damageddream.medicalclinic.service.DoctorService;
+import com.damageddream.medicalclinic.dto.DoctorDTO;
+import com.damageddream.medicalclinic.dto.FacilityDTO;
+import com.damageddream.medicalclinic.dto.GetIdCommand;
+import com.damageddream.medicalclinic.dto.NewDoctorDTO;
+import com.damageddream.medicalclinic.service.DoctorServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import javax.print.Doc;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/doctors")
 public class DoctorRestController {
 
-    private final DoctorService doctorService;
+    private final DoctorServiceImpl doctorServiceImpl;
 
     @GetMapping("/{id}")
-    public Doctor getDoctor(@PathVariable Long id) {
-        return doctorService.findById(id);
+    public DoctorDTO getDoctor(@PathVariable Long id) {
+        return doctorServiceImpl.findById(id);
+    }
+
+    @GetMapping("/{id}/facilities")
+    public List<FacilityDTO> getDoctorsFacilites(@PathVariable Long id) {
+        return doctorServiceImpl.findFacilitiesByDoctor(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Doctor addDoctor(@RequestBody Doctor doctor) {
-        return doctorService.save(doctor);
+    public DoctorDTO addDoctor(@RequestBody NewDoctorDTO doctor) {
+        return doctorServiceImpl.save(doctor);
     }
 
-    @PostMapping("/{id}/facilities")
-    public Doctor addFacilityToDoctor(@PathVariable Long id, @RequestBody GetFacilityIdCommand facilityId) {
-        return doctorService.addFacilityToDoctor(id, facilityId);
+    @PutMapping("/{id}/facilities")
+    public DoctorDTO addFacility(@PathVariable Long id, @RequestBody GetIdCommand entityId) {
+        return doctorServiceImpl.addFacilityToDoctor(id, entityId);
     }
 }

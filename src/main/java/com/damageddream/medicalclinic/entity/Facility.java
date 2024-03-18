@@ -24,6 +24,6 @@ public class Facility {
     private String zipCode;
     private String street;
     private String buildingNo;
-    @ManyToMany(mappedBy = "facilities")
+    @ManyToMany(mappedBy = "facilities", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Doctor> doctors;
 }

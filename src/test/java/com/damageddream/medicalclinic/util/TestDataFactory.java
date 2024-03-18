@@ -1,11 +1,14 @@
 package com.damageddream.medicalclinic.util;
 
-import com.damageddream.medicalclinic.dto.NewPatientDTO;
-import com.damageddream.medicalclinic.dto.PatientDTO;
+import com.damageddream.medicalclinic.dto.*;
+import com.damageddream.medicalclinic.entity.Doctor;
+import com.damageddream.medicalclinic.entity.Facility;
 import com.damageddream.medicalclinic.entity.Patient;
 
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TestDataFactory {
 
@@ -43,6 +46,84 @@ public class TestDataFactory {
                 .phoneNumber("333333333")
                 .birthday(LocalDate.of(1903, 03, 03))
                 .build();
+    }
+
+    public static Doctor createDoctor(String email, String firstName) {
+        return Doctor.builder()
+                .id(1L)
+                .email(email)
+                .password("password")
+                .firstName(firstName)
+                .lastName("Doctor")
+                .specialization("surgeon")
+                .facilities(new ArrayList<>())
+                .build();
+    }
+    public static void addFacilitiesToDoctor(Doctor doctor, List<Facility> facilities) {
+        doctor.getFacilities().addAll(facilities);
+    }
+
+    public static DoctorDTO createDoctorDTO(String email, String firstName) {
+        return DoctorDTO.builder()
+                .email(email)
+                .firstName(firstName)
+                .lastName("doctorDTO")
+                .specialization("surgeonDTO")
+                .build();
+    }
+
+    public static NewDoctorDTO createNewDoctorDTO(String email, String firstName) {
+        return NewDoctorDTO.builder()
+                .email(email)
+                .password("passNewDto")
+                .firstName(firstName)
+                .lastName("NewDoctorDTO")
+                .specialization("surgeonNewDto")
+                .facilities(new ArrayList<>())
+                .build();
+    }
+    public static void addFacilitiesToNewDoctorDto(NewDoctorDTO doctor, List<Facility> facilities) {
+        doctor.getFacilities().addAll(facilities);
+    }
+
+    public static Facility createFacility(String name, String city) {
+        return Facility.builder()
+                .id(1L)
+                .name(name)
+                .city(city)
+                .zipCode("212")
+                .street("Hospital avenue")
+                .buildingNo("3")
+                .doctors(new ArrayList<>())
+                .build();
+    }
+    public static void addDoctorsToFacility(Facility facility, List<Doctor> doctors) {
+        facility.getDoctors().addAll(doctors);
+    }
+
+    public static FacilityDTO createFacilityDTO(String name, String city) {
+        return FacilityDTO.builder()
+                .name(name)
+                .city(city)
+                .zipCode("212Dto")
+                .street("Dto avenue ")
+                .buildingNo("5")
+                .build();
+    }
+
+    public static NewFacilityDTO createNewFacilityDTO(String name, String city) {
+        return NewFacilityDTO.builder()
+                .name(name)
+                .city(city)
+                .zipCode("212")
+                .street("Hospital avenue")
+                .buildingNo("3")
+                .doctors(new ArrayList<>())
+                .build();
+    }
+
+    public static void addDoctorsToNewFacilityDTO(NewFacilityDTO facility, List<Doctor> doctors) {
+        facility.getDoctors().addAll(doctors);
     }
 
 }

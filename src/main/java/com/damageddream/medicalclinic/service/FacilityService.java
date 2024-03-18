@@ -1,23 +1,16 @@
 package com.damageddream.medicalclinic.service;
 
-import com.damageddream.medicalclinic.entity.Facility;
-import com.damageddream.medicalclinic.exception.PatientNotFoundException;
-import com.damageddream.medicalclinic.repository.FacilityRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import com.damageddream.medicalclinic.dto.DoctorDTO;
+import com.damageddream.medicalclinic.dto.FacilityDTO;
+import com.damageddream.medicalclinic.dto.GetIdCommand;
+import com.damageddream.medicalclinic.dto.NewFacilityDTO;
 
-@Service
-@RequiredArgsConstructor
-public class FacilityService {
-    private final FacilityRepository facilityRepository;
+import java.util.List;
 
-    public Facility findById(Long id) {
-        return facilityRepository.findById(id).orElseThrow(
-                ()->new PatientNotFoundException("Facility not found")
-        );
-    }
+public interface FacilityService {
+    FacilityDTO findById(Long id);
+    List<DoctorDTO> findDoctorsByFacility(Long id);
 
-    public Facility save(Facility facility){
-        return facilityRepository.save(facility);
-    }
+    FacilityDTO save(NewFacilityDTO newFacilityDTO);
+    FacilityDTO addDoctorToFacility(Long facilityId, GetIdCommand entityId);
 }

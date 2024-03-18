@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class GetFacilityIdCommand {
-    private Long facilityId;
+public class GetIdCommand {
+    private Long entityId;
 }
