@@ -31,4 +31,17 @@ import java.util.List;
                 inverseJoinColumns = @JoinColumn(name = "facility_id")
         )
         private List<Facility> facilities;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Doctor)) return false;
+        Doctor other = (Doctor) o;
+        return id != null && id.equals(other.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
     }

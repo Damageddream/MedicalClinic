@@ -24,7 +24,7 @@ public class DoctorRestController {
     }
 
     @GetMapping("/{id}/facilities")
-    public List<FacilityDTO> getDoctorsFacilites(@PathVariable Long id) {
+    public List<FacilityDTO> getDoctorsFacilities(@PathVariable Long id) {
         return doctorServiceImpl.findFacilitiesByDoctor(id);
     }
 

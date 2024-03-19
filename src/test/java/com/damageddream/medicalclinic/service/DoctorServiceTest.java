@@ -8,6 +8,7 @@ import com.damageddream.medicalclinic.entity.Doctor;
 import com.damageddream.medicalclinic.entity.Facility;
 import com.damageddream.medicalclinic.exception.DoctorAlreadyExistsException;
 import com.damageddream.medicalclinic.exception.DoctorNotFoundException;
+import com.damageddream.medicalclinic.exception.FacilityNotFoundException;
 import com.damageddream.medicalclinic.repository.DoctorRepository;
 import com.damageddream.medicalclinic.repository.FacilityRepository;
 import com.damageddream.medicalclinic.util.TestDataFactory;
@@ -65,7 +66,7 @@ public class DoctorServiceTest {
 
         //then //when
         DoctorNotFoundException ex = assertThrows(DoctorNotFoundException.class,
-                ()->doctorService.findById(1L));
+                () -> doctorService.findById(1L));
         assertEquals("Doctor not found", ex.getMessage());
     }
 
@@ -97,13 +98,13 @@ public class DoctorServiceTest {
 
         //when //then
         DoctorAlreadyExistsException ex = assertThrows(DoctorAlreadyExistsException.class,
-                ()-> doctorService.save(newDoctorDTO));
+                () -> doctorService.save(newDoctorDTO));
 
         assertEquals("Doctor with that email already exists", ex.getMessage());
     }
 
     @Test
-    void findFacilitiesByDoctor_doctorExists_returnListOfFacilitesDTO() {
+    void findFacilitiesByDoctor_doctorExists_returnListOfFacilitiesDTO() {
         //given
         Doctor doctor = TestDataFactory.createDoctor("doc@email.com", "DocOne");
 
@@ -129,6 +130,17 @@ public class DoctorServiceTest {
     }
 
     @Test
+    void findFacilitiesByDoctor_doctorNotExists_doctorNotFoundExceptionThrown() {
+        //given
+        when(doctorRepository.findById(1L)).thenReturn(Optional.empty());
+
+        //then//when
+        DoctorNotFoundException ex = assertThrows(DoctorNotFoundException.class,
+                () -> doctorService.findFacilitiesByDoctor(1L));
+        assertEquals("Doctor not found", ex.getMessage());
+    }
+
+    @Test
     void addFacilityToDoctor_doctorExists_doctorDTOReturned() {
         //given
         Facility facility = TestDataFactory.createFacility("Fac", "Warsaw");
@@ -147,6 +159,32 @@ public class DoctorServiceTest {
         assertEquals("doc@email.com", result.getEmail());
         assertEquals("Doctor", result.getLastName());
         assertEquals("surgeon", result.getSpecialization());
+    }
+
+    @Test
+    void addFacilityToDoctor_doctorNotExists_doctorNotFoundExceptionThrown() {
+        //given
+        GetIdCommand getIdCommand = new GetIdCommand(1L);
+        when(doctorRepository.findById(2L)).thenReturn(Optional.empty());
+
+        //then//when
+        DoctorNotFoundException ex = assertThrows(DoctorNotFoundException.class,
+                ()->doctorService.addFacilityToDoctor(2L, getIdCommand));
+        assertEquals("Doctor not found", ex.getMessage());
+    }
+
+    @Test
+    void addFacilityToDoctor_facilityNotExists_facilityNotFoundExceptionThrown() {
+        //given
+        GetIdCommand getIdCommand = new GetIdCommand(1L);
+        Doctor doctor = TestDataFactory.createDoctor("doc@email.com", "DocOne");
+        when(doctorRepository.findById(2L)).thenReturn(Optional.of(doctor));
+        when(facilityRepository.findById(1L)).thenReturn(Optional.empty());
+
+        //then//when
+        FacilityNotFoundException ex = assertThrows(FacilityNotFoundException.class,
+                ()->doctorService.addFacilityToDoctor(2L, getIdCommand));
+        assertEquals("Facility not found", ex.getMessage());
     }
 
 }
