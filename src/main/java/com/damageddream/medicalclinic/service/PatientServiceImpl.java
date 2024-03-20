@@ -80,4 +80,9 @@ public class PatientServiceImpl implements PatientService {
         patientRepository.save(toEdit);
         return patientMapper.toDTO(toEdit);
     }
+
+    public void testGit() {
+        System.out.println("git commit test");
+    }
+
 }
