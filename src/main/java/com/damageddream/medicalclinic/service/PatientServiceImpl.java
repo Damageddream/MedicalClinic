@@ -81,9 +81,7 @@ public class PatientServiceImpl implements PatientService {
         return patientMapper.toDTO(toEdit);
     }
 
-    public void testGit() {
-        System.out.println("git commit test");
-    }
+
     public void testGiat() {
         System.out.println("git commit test");
     }
