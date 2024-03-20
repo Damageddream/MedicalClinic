@@ -89,4 +89,10 @@ public class PatientServiceImpl implements PatientService {
     }
 
 
+    public void testGit3() {
+        System.out.println("git commit test");
+    }
+
+
+
 }
