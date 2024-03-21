@@ -1,12 +1,14 @@
 package com.damageddream.medicalclinic.service;
 
-import com.damageddream.medicalclinic.dto.NewPatientDTO;
-import com.damageddream.medicalclinic.dto.PatientDTO;
+import com.damageddream.medicalclinic.dto.*;
+import com.damageddream.medicalclinic.dto.mapper.AppointmentMapper;
 import com.damageddream.medicalclinic.dto.mapper.PatientMapper;
-import com.damageddream.medicalclinic.dto.ChangePasswordCommand;
+import com.damageddream.medicalclinic.entity.Appointment;
 import com.damageddream.medicalclinic.entity.Patient;
+import com.damageddream.medicalclinic.exception.AppointmentNotFoundException;
 import com.damageddream.medicalclinic.exception.EmailAlreadyExistsException;
 import com.damageddream.medicalclinic.exception.PatientNotFoundException;
+import com.damageddream.medicalclinic.repository.AppointmentRepository;
 import com.damageddream.medicalclinic.repository.PatientRepository;
 import com.damageddream.medicalclinic.validation.DataValidator;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,8 @@ public class PatientServiceImpl implements PatientService {
     private final DataValidator dataValidator;
     private final PatientMapper patientMapper;
     private final PatientRepository patientRepository;
+    private final AppointmentMapper appointmentMapper;
+    private final AppointmentRepository appointmentRepository;
 
     @Override
     @Transactional
@@ -81,8 +85,32 @@ public class PatientServiceImpl implements PatientService {
         return patientMapper.toDTO(toEdit);
     }
 
-    public void testGit() {
-        System.out.println("git commit test");
+    @Override
+    @Transactional
+    public AppointmentDTO makeAnAppointment(Long patientId, GetIdCommand appointmentIdCommand) {
+        Long appointmentId = appointmentIdCommand.getEntityId();
+        Patient patient = patientRepository.findById(patientId)
+                .orElseThrow(()->new PatientNotFoundException("Patient not found"));
+        Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow(
+                ()-> new AppointmentNotFoundException("There is no such appointment")
+        );
+        if(appointment.getPatient() != null){
+            throw  new AppointmentNotFoundException("That appointment is no longer free");
+        }
+        appointment.setPatient(patient);
+        return appointmentMapper.toDTO(appointment);
     }
 
+    @Override
+    public List<AppointmentDTO> getPatientsAppointments(Long id) {
+        Patient patient = patientRepository.findById(id)
+                .orElseThrow(()->new PatientNotFoundException("Patient not found"));
+
+        List<Appointment> appointments = appointmentRepository.findAppointmentsByPatient(id);
+        if(appointments.isEmpty()){
+            throw new AppointmentNotFoundException("Patient don't have any appointments");
+        }
+
+        return appointments.stream().map(appointmentMapper::toDTO).toList();
+    }
 }

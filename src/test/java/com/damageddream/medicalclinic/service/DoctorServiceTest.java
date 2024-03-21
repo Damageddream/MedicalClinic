@@ -2,6 +2,7 @@ package com.damageddream.medicalclinic.service;
 
 import com.damageddream.medicalclinic.dto.GetIdCommand;
 import com.damageddream.medicalclinic.dto.NewDoctorDTO;
+import com.damageddream.medicalclinic.dto.mapper.AppointmentMapper;
 import com.damageddream.medicalclinic.dto.mapper.DoctorMapper;
 import com.damageddream.medicalclinic.dto.mapper.FacilityMapper;
 import com.damageddream.medicalclinic.entity.Doctor;
@@ -9,9 +10,11 @@ import com.damageddream.medicalclinic.entity.Facility;
 import com.damageddream.medicalclinic.exception.DoctorAlreadyExistsException;
 import com.damageddream.medicalclinic.exception.DoctorNotFoundException;
 import com.damageddream.medicalclinic.exception.FacilityNotFoundException;
+import com.damageddream.medicalclinic.repository.AppointmentRepository;
 import com.damageddream.medicalclinic.repository.DoctorRepository;
 import com.damageddream.medicalclinic.repository.FacilityRepository;
 import com.damageddream.medicalclinic.util.TestDataFactory;
+import com.damageddream.medicalclinic.validation.DataValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
@@ -28,6 +31,9 @@ public class DoctorServiceTest {
     private DoctorMapper doctorMapper;
     private FacilityRepository facilityRepository;
     private DoctorRepository doctorRepository;
+    private AppointmentRepository appointmentRepository;
+    private DataValidator dataValidator;
+    private AppointmentMapper appointmentMapper;
 
     private DoctorService doctorService;
 
@@ -38,7 +44,9 @@ public class DoctorServiceTest {
         this.facilityRepository = Mockito.mock(FacilityRepository.class);
         this.doctorRepository = Mockito.mock(DoctorRepository.class);
 
-        this.doctorService = new DoctorServiceImpl(doctorRepository, facilityRepository, doctorMapper, facilityMapper);
+
+        this.doctorService = new DoctorServiceImpl(doctorRepository, facilityRepository, appointmentRepository,
+                doctorMapper, facilityMapper, dataValidator, appointmentMapper);
     }
 
     @Test
@@ -169,7 +177,7 @@ public class DoctorServiceTest {
 
         //then//when
         DoctorNotFoundException ex = assertThrows(DoctorNotFoundException.class,
-                ()->doctorService.addFacilityToDoctor(2L, getIdCommand));
+                () -> doctorService.addFacilityToDoctor(2L, getIdCommand));
         assertEquals("Doctor not found", ex.getMessage());
     }
 
@@ -183,7 +191,7 @@ public class DoctorServiceTest {
 
         //then//when
         FacilityNotFoundException ex = assertThrows(FacilityNotFoundException.class,
-                ()->doctorService.addFacilityToDoctor(2L, getIdCommand));
+                () -> doctorService.addFacilityToDoctor(2L, getIdCommand));
         assertEquals("Facility not found", ex.getMessage());
     }
 

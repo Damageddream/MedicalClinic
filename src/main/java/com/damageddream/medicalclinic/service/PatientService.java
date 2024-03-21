@@ -1,8 +1,7 @@
 package com.damageddream.medicalclinic.service;
 
-import com.damageddream.medicalclinic.dto.PatientDTO;
-import com.damageddream.medicalclinic.dto.ChangePasswordCommand;
-import com.damageddream.medicalclinic.dto.NewPatientDTO;
+import com.damageddream.medicalclinic.dto.*;
+import com.damageddream.medicalclinic.entity.Appointment;
 
 import java.util.List;
 
@@ -14,4 +13,6 @@ public interface PatientService {
     PatientDTO delete(String email);
 
     PatientDTO editPassword(ChangePasswordCommand password, String email);
+    AppointmentDTO makeAnAppointment(Long patientId, GetIdCommand appointmentId);
+    List<AppointmentDTO> getPatientsAppointments(Long id);
 }

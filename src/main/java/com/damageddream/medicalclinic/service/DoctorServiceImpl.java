@@ -7,13 +7,11 @@ import com.damageddream.medicalclinic.dto.mapper.FacilityMapper;
 import com.damageddream.medicalclinic.entity.Appointment;
 import com.damageddream.medicalclinic.entity.Doctor;
 import com.damageddream.medicalclinic.entity.Facility;
-import com.damageddream.medicalclinic.exception.DoctorAlreadyExistsException;
-import com.damageddream.medicalclinic.exception.DoctorNotFoundException;
-import com.damageddream.medicalclinic.exception.FacilityAlreadyExistsException;
-import com.damageddream.medicalclinic.exception.FacilityNotFoundException;
+import com.damageddream.medicalclinic.exception.*;
 import com.damageddream.medicalclinic.repository.AppointmentRepository;
 import com.damageddream.medicalclinic.repository.DoctorRepository;
 import com.damageddream.medicalclinic.repository.FacilityRepository;
+import com.damageddream.medicalclinic.validation.DataValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +26,7 @@ public class DoctorServiceImpl implements DoctorService {
     private final AppointmentRepository appointmentRepository;
     private final DoctorMapper doctorMapper;
     private final FacilityMapper facilityMapper;
+    private final DataValidator dataValidator;
     private final AppointmentMapper appointmentMapper;
 
 
@@ -74,13 +73,30 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Override
     @Transactional
-    public DoctorDTO addAppointment(Long doctorId, Appointment appointment) {
+    public AppointmentDTO addAppointment(Long doctorId, Appointment appointment) {
+        dataValidator.validateDateTime(appointment.getAppointmentStart(), appointment.getAppointmentEnd());
+        List<Appointment> conflictingAppointments = appointmentRepository
+                .findConflictingAppointments(doctorId, appointment.getAppointmentStart()
+                        , appointment.getAppointmentEnd());
+        if(!conflictingAppointments.isEmpty()) {
+            throw new InvalidDateTimeException("There is already appointment at this time");
+        }
+
         Doctor doctor = doctorRepository.findById(doctorId)
                 .orElseThrow(() -> new DoctorNotFoundException("Doctor not found"));
 
         appointment.setDoctor(doctor);
         appointmentRepository.save(appointment);
 
-        return doctorMapper.toDTO(doctor);
+        return appointmentMapper.toDTO(appointment);
+    }
+
+    @Override
+    public List<AppointmentDTO> getFreeAppointmentsByDoctor(Long doctorId) {
+        List<Appointment> appointments = appointmentRepository.findFreeAppointmentsByDoctor(doctorId);
+        if(appointments.isEmpty()){
+            throw new AppointmentNotFoundException("There are no free appointments for this doctor");
+        }
+        return appointments.stream().map(appointmentMapper::toDTO).toList();
     }
 }

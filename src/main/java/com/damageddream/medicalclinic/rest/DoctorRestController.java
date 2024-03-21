@@ -37,8 +37,13 @@ public class DoctorRestController {
         return doctorServiceImpl.addFacilityToDoctor(id, entityId);
     }
 
-    @PutMapping("/{id}/appointments")
-    public DoctorDTO addAppointment(@PathVariable Long id, @RequestBody Appointment appointment) {
+    @PostMapping("/{id}/appointments")
+    public AppointmentDTO addAppointment(@PathVariable Long id, @RequestBody Appointment appointment) {
         return doctorServiceImpl.addAppointment(id, appointment);
+    }
+
+    @GetMapping("/{id}/appointments/free")
+    public List<AppointmentDTO> getFreeAppointments(@PathVariable Long id){
+        return doctorServiceImpl.getFreeAppointmentsByDoctor(id);
     }
 }

@@ -5,8 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Entity
@@ -26,7 +24,7 @@ public class Appointment {
     @JoinColumn(name = "doctor_id")
     private Doctor doctor;
     private LocalDateTime appointmentStart;
-    private Duration duration;
+    private LocalDateTime appointmentEnd;
 
     @Override
     public boolean equals(Object o) {

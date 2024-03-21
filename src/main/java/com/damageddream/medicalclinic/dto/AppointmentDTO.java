@@ -7,12 +7,13 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Getter
-@RequiredArgsConstructor
 @Builder
 @EqualsAndHashCode
+@RequiredArgsConstructor
 public class AppointmentDTO {
-    private PatientDTO patient;
-    private DoctorDTO doctor;
-    private LocalDateTime appointmentStart;
-    private Duration duration;
+    private final Long id;
+    private final PatientDTO patient;
+    private final DoctorDTO doctor;
+    private final LocalDateTime appointmentStart;
+    private final LocalDateTime appointmentEnd;
 }

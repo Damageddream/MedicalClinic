@@ -1,8 +1,6 @@
 package com.damageddream.medicalclinic.rest;
 
-import com.damageddream.medicalclinic.dto.NewPatientDTO;
-import com.damageddream.medicalclinic.dto.PatientDTO;
-import com.damageddream.medicalclinic.dto.ChangePasswordCommand;
+import com.damageddream.medicalclinic.dto.*;
 import com.damageddream.medicalclinic.service.PatientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -46,5 +44,15 @@ public class PatientRestController {
     @DeleteMapping("/{patientEmail}")
     public PatientDTO deletePatient(@PathVariable String patientEmail) {
         return patientService.delete(patientEmail);
+    }
+
+    @PatchMapping("/{id}/appointment")
+    public AppointmentDTO patchAppointment(@PathVariable Long id, @RequestBody GetIdCommand appointmentId){
+        return patientService.makeAnAppointment(id, appointmentId);
+    }
+
+    @GetMapping("/{id}/appointment")
+    public List<AppointmentDTO> getAppointments(@PathVariable Long id){
+        return patientService.getPatientsAppointments(id);
     }
 }

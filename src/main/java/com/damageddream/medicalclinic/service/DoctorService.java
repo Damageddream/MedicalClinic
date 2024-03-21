@@ -11,7 +11,6 @@ public interface DoctorService {
     DoctorDTO save(NewDoctorDTO newDoctorDTO);
     DoctorDTO addFacilityToDoctor(Long doctorId, GetIdCommand entityId);
 
-    DoctorDTO addAppointment(Long doctorId, Appointment appointment);
-
-
+    AppointmentDTO addAppointment(Long doctorId, Appointment appointment);
+    List<AppointmentDTO> getFreeAppointmentsByDoctor(Long doctorId);
 }

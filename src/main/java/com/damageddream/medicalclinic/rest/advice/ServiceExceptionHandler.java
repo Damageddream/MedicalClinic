@@ -90,6 +90,23 @@ public class ServiceExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
+    @ExceptionHandler(InvalidDateTimeException.class)
+    public ResponseEntity<ErrorResponse> invalidDateTimeExceptionResponse(
+            InvalidDateTimeException invalidDateTimeException) {
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.CONFLICT,
+                invalidDateTimeException.getMessage(),LocalDateTime.now());
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+
+    @ExceptionHandler(AppointmentNotFoundException.class)
+    public ResponseEntity<ErrorResponse> appointmentNotFoundResponse(
+            AppointmentNotFoundException appointmentNotFound) {
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND,
+                appointmentNotFound.getMessage(),LocalDateTime.now());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
 
 
     @ExceptionHandler(RuntimeException.class)
