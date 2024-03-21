@@ -29,9 +29,7 @@ import static org.mockito.Mockito.*;
 public class PatientServiceTest {
     private DataValidator dataValidator;
     private PatientMapper patientMapper;
-    private AppointmentMapper appointmentMapper;
     private PatientRepository patientRepository;
-    private AppointmentRepository appointmentRepository;
 
     private PatientService patientService;
 
@@ -43,7 +41,7 @@ public class PatientServiceTest {
         this.patientRepository = Mockito.mock(PatientRepository.class);
 
         this.patientService = new PatientServiceImpl(dataValidator, patientMapper,
-                patientRepository, appointmentMapper, appointmentRepository);
+                patientRepository);
     }
 
     @Test

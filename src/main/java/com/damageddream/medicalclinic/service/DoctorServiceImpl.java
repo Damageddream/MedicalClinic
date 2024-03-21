@@ -23,11 +23,10 @@ import java.util.List;
 public class DoctorServiceImpl implements DoctorService {
     private final DoctorRepository doctorRepository;
     private final FacilityRepository facilityRepository;
-    private final AppointmentRepository appointmentRepository;
     private final DoctorMapper doctorMapper;
     private final FacilityMapper facilityMapper;
-    private final DataValidator dataValidator;
-    private final AppointmentMapper appointmentMapper;
+
+
 
 
     @Override
@@ -71,32 +70,5 @@ public class DoctorServiceImpl implements DoctorService {
         return doctorMapper.toDTO(doctor);
     }
 
-    @Override
-    @Transactional
-    public AppointmentDTO addAppointment(Long doctorId, Appointment appointment) {
-        dataValidator.validateDateTime(appointment.getAppointmentStart(), appointment.getAppointmentEnd());
-        List<Appointment> conflictingAppointments = appointmentRepository
-                .findConflictingAppointments(doctorId, appointment.getAppointmentStart()
-                        , appointment.getAppointmentEnd());
-        if(!conflictingAppointments.isEmpty()) {
-            throw new InvalidDateTimeException("There is already appointment at this time");
-        }
 
-        Doctor doctor = doctorRepository.findById(doctorId)
-                .orElseThrow(() -> new DoctorNotFoundException("Doctor not found"));
-
-        appointment.setDoctor(doctor);
-        appointmentRepository.save(appointment);
-
-        return appointmentMapper.toDTO(appointment);
-    }
-
-    @Override
-    public List<AppointmentDTO> getFreeAppointmentsByDoctor(Long doctorId) {
-        List<Appointment> appointments = appointmentRepository.findFreeAppointmentsByDoctor(doctorId);
-        if(appointments.isEmpty()){
-            throw new AppointmentNotFoundException("There are no free appointments for this doctor");
-        }
-        return appointments.stream().map(appointmentMapper::toDTO).toList();
-    }
 }

@@ -46,13 +46,5 @@ public class PatientRestController {
         return patientService.delete(patientEmail);
     }
 
-    @PatchMapping("/{id}/appointment")
-    public AppointmentDTO patchAppointment(@PathVariable Long id, @RequestBody GetIdCommand appointmentId){
-        return patientService.makeAnAppointment(id, appointmentId);
-    }
 
-    @GetMapping("/{id}/appointment")
-    public List<AppointmentDTO> getAppointments(@PathVariable Long id){
-        return patientService.getPatientsAppointments(id);
-    }
 }

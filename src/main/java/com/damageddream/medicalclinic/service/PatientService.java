@@ -13,6 +13,5 @@ public interface PatientService {
     PatientDTO delete(String email);
 
     PatientDTO editPassword(ChangePasswordCommand password, String email);
-    AppointmentDTO makeAnAppointment(Long patientId, GetIdCommand appointmentId);
-    List<AppointmentDTO> getPatientsAppointments(Long id);
+
 }

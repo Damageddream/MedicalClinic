@@ -1,7 +1,6 @@
 package com.damageddream.medicalclinic.rest;
 
 import com.damageddream.medicalclinic.dto.*;
-import com.damageddream.medicalclinic.entity.Appointment;
 import com.damageddream.medicalclinic.service.DoctorServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -37,13 +36,5 @@ public class DoctorRestController {
         return doctorServiceImpl.addFacilityToDoctor(id, entityId);
     }
 
-    @PostMapping("/{id}/appointments")
-    public AppointmentDTO addAppointment(@PathVariable Long id, @RequestBody Appointment appointment) {
-        return doctorServiceImpl.addAppointment(id, appointment);
-    }
 
-    @GetMapping("/{id}/appointments/free")
-    public List<AppointmentDTO> getFreeAppointments(@PathVariable Long id){
-        return doctorServiceImpl.getFreeAppointmentsByDoctor(id);
-    }
 }
