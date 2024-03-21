@@ -31,6 +31,8 @@ import java.util.List;
                 inverseJoinColumns = @JoinColumn(name = "facility_id")
         )
         private List<Facility> facilities;
+        @OneToMany(mappedBy = "doctor")
+        private List<Appointment> appointments;
 
     @Override
     public boolean equals(Object o) {

@@ -6,37 +6,33 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Objects;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Patient {
+public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Long id;
-    @Column(unique = true)
-    private String email;
-    private String password;
-    @Column(unique = true)
-    private String idCardNo;
-    private String firstName;
-    private String lastName;
-    private String phoneNumber;
-    private LocalDate birthday;
-    @OneToMany(mappedBy = "patient")
-    private List<Appointment> appointments;
+    @ManyToOne
+    @JoinColumn(name = "patient_id")
+    private Patient patient;
+    @ManyToOne
+    @JoinColumn(name = "doctor_id")
+    private Doctor doctor;
+    private LocalDateTime appointmentStart;
+    private Duration duration;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Patient)) return false;
-        Patient other = (Patient) o;
+        if (!(o instanceof Appointment)) return false;
+        Appointment other = (Appointment) o;
         return id != null && id.equals(other.getId());
     }
 
@@ -44,4 +40,5 @@ public class Patient {
     public int hashCode() {
         return getClass().hashCode();
     }
+
 }

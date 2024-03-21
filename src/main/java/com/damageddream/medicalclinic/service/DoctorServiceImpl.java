@@ -1,17 +1,17 @@
 package com.damageddream.medicalclinic.service;
 
-import com.damageddream.medicalclinic.dto.DoctorDTO;
-import com.damageddream.medicalclinic.dto.FacilityDTO;
-import com.damageddream.medicalclinic.dto.GetIdCommand;
-import com.damageddream.medicalclinic.dto.NewDoctorDTO;
+import com.damageddream.medicalclinic.dto.*;
+import com.damageddream.medicalclinic.dto.mapper.AppointmentMapper;
 import com.damageddream.medicalclinic.dto.mapper.DoctorMapper;
 import com.damageddream.medicalclinic.dto.mapper.FacilityMapper;
+import com.damageddream.medicalclinic.entity.Appointment;
 import com.damageddream.medicalclinic.entity.Doctor;
 import com.damageddream.medicalclinic.entity.Facility;
 import com.damageddream.medicalclinic.exception.DoctorAlreadyExistsException;
 import com.damageddream.medicalclinic.exception.DoctorNotFoundException;
 import com.damageddream.medicalclinic.exception.FacilityAlreadyExistsException;
 import com.damageddream.medicalclinic.exception.FacilityNotFoundException;
+import com.damageddream.medicalclinic.repository.AppointmentRepository;
 import com.damageddream.medicalclinic.repository.DoctorRepository;
 import com.damageddream.medicalclinic.repository.FacilityRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +25,11 @@ import java.util.List;
 public class DoctorServiceImpl implements DoctorService {
     private final DoctorRepository doctorRepository;
     private final FacilityRepository facilityRepository;
+    private final AppointmentRepository appointmentRepository;
     private final DoctorMapper doctorMapper;
     private final FacilityMapper facilityMapper;
+    private final AppointmentMapper appointmentMapper;
+
 
     @Override
     public DoctorDTO findById(Long id) {
@@ -66,6 +69,18 @@ public class DoctorServiceImpl implements DoctorService {
 
         doctor.getFacilities().add(facility);
         doctorRepository.save(doctor);
+        return doctorMapper.toDTO(doctor);
+    }
+
+    @Override
+    @Transactional
+    public DoctorDTO addAppointment(Long doctorId, Appointment appointment) {
+        Doctor doctor = doctorRepository.findById(doctorId)
+                .orElseThrow(() -> new DoctorNotFoundException("Doctor not found"));
+
+        appointment.setDoctor(doctor);
+        appointmentRepository.save(appointment);
+
         return doctorMapper.toDTO(doctor);
     }
 }
