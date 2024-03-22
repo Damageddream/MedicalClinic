@@ -9,6 +9,7 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface FacilityMapper {
     FacilityDTO toDTO(Facility facility);
+
     Facility fromDTO(NewFacilityDTO newFacilityDTO);
 
 }

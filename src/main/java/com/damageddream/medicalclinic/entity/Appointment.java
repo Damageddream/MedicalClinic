@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -29,8 +30,7 @@ public class Appointment {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Appointment)) return false;
-        Appointment other = (Appointment) o;
+        if (!(o instanceof Appointment other)) return false;
         return id != null && id.equals(other.getId());
     }
 

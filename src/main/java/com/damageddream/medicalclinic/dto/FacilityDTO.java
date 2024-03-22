@@ -1,12 +1,9 @@
 package com.damageddream.medicalclinic.dto;
 
-import com.damageddream.medicalclinic.entity.Doctor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
-import java.util.List;
 
 @Getter
 @RequiredArgsConstructor

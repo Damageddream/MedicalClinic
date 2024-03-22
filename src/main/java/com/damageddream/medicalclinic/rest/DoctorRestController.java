@@ -1,6 +1,9 @@
 package com.damageddream.medicalclinic.rest;
 
-import com.damageddream.medicalclinic.dto.*;
+import com.damageddream.medicalclinic.dto.DoctorDTO;
+import com.damageddream.medicalclinic.dto.FacilityDTO;
+import com.damageddream.medicalclinic.dto.GetIdCommand;
+import com.damageddream.medicalclinic.dto.NewDoctorDTO;
 import com.damageddream.medicalclinic.service.DoctorServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

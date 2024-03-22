@@ -8,8 +8,10 @@ import java.util.List;
 
 public interface AppointmentService {
     AppointmentDTO makeAnAppointment(Long patientId, GetIdCommand appointmentId);
+
     List<AppointmentDTO> getPatientsAppointments(Long id);
 
     AppointmentDTO addAppointment(Long doctorId, Appointment appointment);
+
     List<AppointmentDTO> getFreeAppointmentsByDoctor(Long doctorId);
 }

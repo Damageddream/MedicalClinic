@@ -1,7 +1,6 @@
 package com.damageddream.medicalclinic.dto;
 
 import com.damageddream.medicalclinic.entity.Doctor;
-import jakarta.persistence.ManyToMany;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

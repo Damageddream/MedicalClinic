@@ -1,12 +1,9 @@
 package com.damageddream.medicalclinic.dto.mapper;
 
 import com.damageddream.medicalclinic.dto.AppointmentDTO;
-
 import com.damageddream.medicalclinic.entity.Appointment;
-
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-
 
 
 @Mapper(componentModel = "spring", uses = {DoctorMapper.class, PatientMapper.class})

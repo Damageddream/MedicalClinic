@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-
 import java.time.LocalDateTime;
 
 @RestControllerAdvice
@@ -67,7 +66,7 @@ public class ServiceExceptionHandler {
     public ResponseEntity<ErrorResponse> doctorNotFoundExceptionResponse(
             DoctorNotFoundException doctorNotFoundException) {
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND,
-                doctorNotFoundException.getMessage(),LocalDateTime.now());
+                doctorNotFoundException.getMessage(), LocalDateTime.now());
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
@@ -86,15 +85,16 @@ public class ServiceExceptionHandler {
     public ResponseEntity<ErrorResponse> facilityNotFoundExceptionResponse(
             FacilityNotFoundException facilityNotFoundException) {
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND,
-                facilityNotFoundException.getMessage(),LocalDateTime.now());
+                facilityNotFoundException.getMessage(), LocalDateTime.now());
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
+
     @ExceptionHandler(InvalidDateTimeException.class)
     public ResponseEntity<ErrorResponse> invalidDateTimeExceptionResponse(
             InvalidDateTimeException invalidDateTimeException) {
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.CONFLICT,
-                invalidDateTimeException.getMessage(),LocalDateTime.now());
+                invalidDateTimeException.getMessage(), LocalDateTime.now());
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
@@ -103,7 +103,7 @@ public class ServiceExceptionHandler {
     public ResponseEntity<ErrorResponse> appointmentNotFoundResponse(
             AppointmentNotFoundException appointmentNotFound) {
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND,
-                appointmentNotFound.getMessage(),LocalDateTime.now());
+                appointmentNotFound.getMessage(), LocalDateTime.now());
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }

@@ -41,17 +41,19 @@ public class FacilityServiceImpl implements FacilityService {
                 .orElseThrow(() -> new FacilityNotFoundException("Facility not found"));
         return facility.getDoctors().stream().map(doctorMapper::toDTO).toList();
     }
+
     @Override
     @Transactional
     public FacilityDTO save(NewFacilityDTO newFacilityDTO) {
         var existingFacility = facilityRepository.findByName(newFacilityDTO.getName());
-        if(existingFacility.isPresent()) {
-            throw  new FacilityAlreadyExistsException("Facility with that name already exists");
+        if (existingFacility.isPresent()) {
+            throw new FacilityAlreadyExistsException("Facility with that name already exists");
         }
         Facility facility = facilityMapper.fromDTO(newFacilityDTO);
         facilityRepository.save(facility);
         return facilityMapper.toDTO(facility);
     }
+
     @Override
     @Transactional
     public FacilityDTO addDoctorToFacility(Long facilityId, GetIdCommand entityId) {
@@ -61,7 +63,7 @@ public class FacilityServiceImpl implements FacilityService {
         Doctor doctor = doctorRepository.findById(entityId.getEntityId())
                 .orElseThrow(() -> new DoctorNotFoundException("Doctor not found"));
 
-        if(facility.getDoctors().contains(doctor)){
+        if (facility.getDoctors().contains(doctor)) {
             throw new DoctorAlreadyExistsException("Doctor already is in this facility");
         }
 

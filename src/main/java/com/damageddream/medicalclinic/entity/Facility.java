@@ -30,8 +30,7 @@ public class Facility {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Facility)) return false;
-        Facility other = (Facility) o;
+        if (!(o instanceof Facility other)) return false;
         return id != null && id.equals(other.getId());
     }
 

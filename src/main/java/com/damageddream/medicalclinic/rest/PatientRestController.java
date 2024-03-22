@@ -1,6 +1,8 @@
 package com.damageddream.medicalclinic.rest;
 
-import com.damageddream.medicalclinic.dto.*;
+import com.damageddream.medicalclinic.dto.ChangePasswordCommand;
+import com.damageddream.medicalclinic.dto.NewPatientDTO;
+import com.damageddream.medicalclinic.dto.PatientDTO;
 import com.damageddream.medicalclinic.service.PatientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,7 +18,7 @@ public class PatientRestController {
     private final PatientService patientService;
 
     @GetMapping
-    public List<PatientDTO> findAll(){
+    public List<PatientDTO> findAll() {
         return patientService.findAll();
     }
 
