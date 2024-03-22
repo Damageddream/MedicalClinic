@@ -5,6 +5,7 @@ import com.damageddream.medicalclinic.dto.GetIdCommand;
 import com.damageddream.medicalclinic.entity.Appointment;
 import com.damageddream.medicalclinic.service.AppointmentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +17,7 @@ public class AppointmentRestController {
     private final AppointmentService appointmentService;
 
     @PostMapping("/doctor/{id}")
+    @ResponseStatus(HttpStatus.CREATED)
     public AppointmentDTO addAppointment(@PathVariable Long id, @RequestBody Appointment appointment) {
         return appointmentService.addAppointment(id, appointment);
     }
