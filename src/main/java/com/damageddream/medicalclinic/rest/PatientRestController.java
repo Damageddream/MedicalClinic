@@ -48,5 +48,4 @@ public class PatientRestController {
         return patientService.delete(patientEmail);
     }
 
-
 }

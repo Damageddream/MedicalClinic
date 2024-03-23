@@ -28,22 +28,18 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final PatientRepository patientRepository;
     private final DoctorRepository doctorRepository;
     private final AppointmentRepository appointmentRepository;
-
     private final DataValidator dataValidator;
 
     @Override
     @Transactional
     public AppointmentDTO addAppointment(Long doctorId, Appointment appointment) {
         dataValidator.validateDateTime(appointment.getAppointmentStart(), appointment.getAppointmentEnd());
-        List<Appointment> conflictingAppointments = appointmentRepository
-                .findConflictingAppointments(doctorId, appointment.getAppointmentStart()
-                        , appointment.getAppointmentEnd());
+        List<Appointment> conflictingAppointments = appointmentRepository.findConflictingAppointments(doctorId, appointment.getAppointmentStart(), appointment.getAppointmentEnd());
         if (!conflictingAppointments.isEmpty()) {
             throw new InvalidDateTimeException("There is already appointment at this time");
         }
 
-        Doctor doctor = doctorRepository.findById(doctorId)
-                .orElseThrow(() -> new DoctorNotFoundException("Doctor not found"));
+        Doctor doctor = doctorRepository.findById(doctorId).orElseThrow(() -> new DoctorNotFoundException("Doctor not found"));
 
         appointment.setDoctor(doctor);
         appointmentRepository.save(appointment);
@@ -64,11 +60,8 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Transactional
     public AppointmentDTO makeAnAppointment(Long patientId, GetIdCommand appointmentIdCommand) {
         Long appointmentId = appointmentIdCommand.getEntityId();
-        Patient patient = patientRepository.findById(patientId)
-                .orElseThrow(() -> new PatientNotFoundException("Patient not found"));
-        Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow(
-                () -> new AppointmentNotFoundException("There is no such appointment")
-        );
+        Patient patient = patientRepository.findById(patientId).orElseThrow(() -> new PatientNotFoundException("Patient not found"));
+        Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow(() -> new AppointmentNotFoundException("There is no such appointment"));
         if (appointment.getPatient() != null) {
             throw new AppointmentNotFoundException("That appointment is no longer free");
         }
@@ -78,8 +71,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public List<AppointmentDTO> getPatientsAppointments(Long id) {
-        Patient patient = patientRepository.findById(id)
-                .orElseThrow(() -> new PatientNotFoundException("Patient not found"));
+        Patient patient = patientRepository.findById(id).orElseThrow(() -> new PatientNotFoundException("Patient not found"));
 
         List<Appointment> appointments = appointmentRepository.findAppointmentsByPatient(id);
         if (appointments.isEmpty()) {

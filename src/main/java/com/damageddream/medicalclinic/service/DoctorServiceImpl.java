@@ -67,11 +67,8 @@ public class DoctorServiceImpl implements DoctorService {
         if (doctor.getFacilities().contains(facility)) {
             throw new FacilityAlreadyExistsException("Facility already is this doctor employer");
         }
-
         doctor.getFacilities().add(facility);
         doctorRepository.save(doctor);
         return doctorMapper.toDTO(doctor);
     }
-
-
 }

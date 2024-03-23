@@ -9,11 +9,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
-
-    @Query("SELECT a FROM Appointment a WHERE a.doctor.id = :doctorId AND " +
-            "((:newAppointmentStart >= a.appointmentStart AND :newAppointmentStart < a.appointmentEnd) OR " +
-            "(:newAppointmentEnd > a.appointmentStart AND :newAppointmentEnd <= a.appointmentEnd) OR " +
-            "(:newAppointmentStart <= a.appointmentStart AND :newAppointmentEnd >= a.appointmentEnd))")
+    @Query("SELECT a FROM Appointment a WHERE :doctorId = a.doctor.id AND" +
+            "(a.appointmentStart <=:newAppointmentEnd AND a.appointmentEnd >=:newAppointmentStart)")
     List<Appointment> findConflictingAppointments(
             @Param("doctorId") Long doctorId,
             @Param("newAppointmentStart") LocalDateTime newAppointmentStart,
