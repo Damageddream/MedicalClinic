@@ -71,4 +71,13 @@ public class DoctorServiceImpl implements DoctorService {
         doctorRepository.save(doctor);
         return doctorMapper.toDTO(doctor);
     }
+
+    @Override
+    @Transactional
+    public DoctorDTO deleteDoctor(Long id) {
+        Doctor doctor = doctorRepository.findById(id)
+                .orElseThrow(() -> new DoctorNotFoundException("Doctor not found"));
+        doctorRepository.delete(doctor);
+        return doctorMapper.toDTO(doctor);
+    }
 }

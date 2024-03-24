@@ -116,6 +116,22 @@ public class DoctorRestControllerTest {
     }
 
     @Test
+    void deleteDoctor_doctorExists_returnDoctorDTO() throws Exception {
+        //given
+        DoctorDTO doctorDTO = TestDataFactory.createDoctorDTO("doc@email.com", "Doc");
+        when(doctorService.deleteDoctor(1L)).thenReturn(doctorDTO);
+
+        //when//then
+        mockMvc.perform(delete("/doctors/{id}", 1L))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.firstName").value("Doc"))
+                .andExpect(jsonPath("$.lastName").value("doctorDTO"))
+                .andExpect(jsonPath("$.email").value("doc@email.com"))
+                .andExpect(jsonPath("$.specialization").value("surgeonDTO"));
+    }
+
+    @Test
     void postDoctor_emailNotUnique_returnConflictStatus() throws Exception {
         //given
         NewDoctorDTO newDoctorDTO = TestDataFactory.createNewDoctorDTO("doc@email.com", "Doc");
@@ -166,5 +182,4 @@ public class DoctorRestControllerTest {
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
-
 }

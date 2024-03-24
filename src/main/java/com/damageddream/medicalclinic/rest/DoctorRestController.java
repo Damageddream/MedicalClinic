@@ -39,5 +39,8 @@ public class DoctorRestController {
         return doctorServiceImpl.addFacilityToDoctor(id, entityId);
     }
 
-
+    @DeleteMapping("/{id}")
+    public DoctorDTO deleteDoctor(@PathVariable Long id) {
+        return doctorServiceImpl.deleteDoctor(id);
+    }
 }

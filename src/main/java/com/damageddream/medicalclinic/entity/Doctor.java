@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.List;
 
@@ -25,6 +27,7 @@ public class Doctor {
     private String lastName;
     private String specialization;
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     @JoinTable(
             name = "doctor_facility",
             joinColumns = @JoinColumn(name = "doctor_id"),

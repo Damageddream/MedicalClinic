@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 public class DoctorServiceTest {
@@ -190,4 +191,31 @@ public class DoctorServiceTest {
         assertEquals("Facility not found", ex.getMessage());
     }
 
+    @Test
+    void deleteDoctor_doctorExists_returnDoctorDTO() {
+        //given
+        Doctor doctor = TestDataFactory.createDoctor("doc@email.com", "DocOne");
+        when(doctorRepository.findById(1L)).thenReturn(Optional.of(doctor));
+
+        //when
+        var result = doctorService.deleteDoctor(1L);
+
+        //then
+        assertNotNull(result);
+        assertEquals("DocOne", result.getFirstName());
+        assertEquals("doc@email.com", result.getEmail());
+        assertEquals("Doctor", result.getLastName());
+        assertEquals("surgeon", result.getSpecialization());
+    }
+
+    @Test
+    void deleteDoctor_doctorNotExists_throwsDoctorNotExistsException() {
+        //given
+        when(doctorRepository.findById(1L)).thenReturn(Optional.empty());
+
+        //when //then
+        DoctorNotFoundException ex = assertThrows(DoctorNotFoundException.class,
+                () -> doctorService.deleteDoctor(1L));
+        assertEquals("Doctor not found", ex.getMessage());
+    }
 }

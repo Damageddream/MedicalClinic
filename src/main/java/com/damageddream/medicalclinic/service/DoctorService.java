@@ -16,5 +16,7 @@ public interface DoctorService {
 
     DoctorDTO addFacilityToDoctor(Long doctorId, GetIdCommand entityId);
 
+    DoctorDTO deleteDoctor(Long id);
+
 
 }
