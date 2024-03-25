@@ -11,8 +11,7 @@ import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DoctorMapperTest {
     private DoctorMapper doctorMapper;
@@ -44,7 +43,7 @@ public class DoctorMapperTest {
         NewDoctorDTO newDoctorDTO = TestDataFactory.createNewDoctorDTO("doc@email.com", "Doc");
         Facility facility1 = TestDataFactory.createFacility("Fac", "Warsaw");
         Facility facility2 = TestDataFactory.createFacility("Ility", "Carcow");
-        TestDataFactory.addFacilitiesToNewDoctorDto(newDoctorDTO, List.of(facility1,facility2));
+        TestDataFactory.addFacilitiesToNewDoctorDto(newDoctorDTO, List.of(facility1, facility2));
 
         //when
         var result = doctorMapper.fromDTO(newDoctorDTO);
@@ -60,6 +59,31 @@ public class DoctorMapperTest {
         assertEquals("Warsaw", result.getFacilities().get(0).getCity());
         assertEquals("Ility", result.getFacilities().get(1).getName());
         assertEquals("Carcow", result.getFacilities().get(1).getCity());
+    }
 
+    @Test
+    void updateDoctorFromDTO_validDoctorDTO_doctorUpdated() {
+        //given
+        Doctor doctor = TestDataFactory.createDoctor("doc@email.com", "Doc");
+        NewDoctorDTO newDoctorDTO = TestDataFactory.createNewDoctorDTO("docDTO@email.com", "DocDTO");
+        Facility facility = TestDataFactory.createFacility("Fac", "Warsaw");
+        doctor.getFacilities().add(facility);
+
+        //when
+        doctorMapper.updateDoctorFromDTO(newDoctorDTO, doctor);
+
+        //then
+        assertNotNull(doctor);
+        assertEquals("docDTO@email.com", doctor.getEmail());
+        assertEquals("DocDTO", doctor.getFirstName());
+        assertEquals("NewDoctorDTO", doctor.getLastName());
+        assertEquals("surgeonNewDto", doctor.getSpecialization());
+        assertEquals("Fac", doctor.getFacilities().get(0).getName());
+        assertEquals("Warsaw", doctor.getFacilities().get(0).getCity());
+
+        assertNotEquals("doc@email.com", doctor.getEmail());
+        assertNotEquals("Doc", doctor.getFirstName());
+        assertNotEquals("Doctor", doctor.getLastName());
+        assertNotEquals("surgeon", doctor.getSpecialization());
     }
 }

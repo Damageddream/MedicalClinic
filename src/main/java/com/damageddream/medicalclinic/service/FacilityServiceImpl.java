@@ -71,4 +71,28 @@ public class FacilityServiceImpl implements FacilityService {
         doctorRepository.save(doctor);
         return facilityMapper.toDTO(facility);
     }
+
+    @Override
+    @Transactional
+    public FacilityDTO update(Long id, NewFacilityDTO newFacility) {
+        Facility facility = facilityRepository.findById(id)
+                .orElseThrow(() -> new FacilityNotFoundException("Facility not found"));
+        facilityMapper.updateFacilityFromDTO(newFacility, facility);
+        facilityRepository.save(facility);
+        return facilityMapper.toDTO(facility);
+    }
+
+    @Override
+    @Transactional
+    public FacilityDTO deleteFacility(Long id) {
+        Facility facility = facilityRepository.findById(id)
+                .orElseThrow(() -> new FacilityNotFoundException("Facility not found"));
+        for (Doctor doctor : facility.getDoctors()) {
+            doctor.getFacilities().remove(facility);
+        }
+        facility.getDoctors().clear();
+
+        facilityRepository.delete(facility);
+        return facilityMapper.toDTO(facility);
+    }
 }

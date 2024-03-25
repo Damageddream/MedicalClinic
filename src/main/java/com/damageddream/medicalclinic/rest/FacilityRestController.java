@@ -39,4 +39,14 @@ public class FacilityRestController {
         return facilityServiceImpl.addDoctorToFacility(id, entityId);
     }
 
+    @PutMapping("/{id}")
+    public FacilityDTO updateFacility(@PathVariable Long id, @RequestBody NewFacilityDTO facility){
+        return facilityServiceImpl.update(id, facility);
+    }
+
+    @DeleteMapping("/{id}")
+    public FacilityDTO deleteFacility(@PathVariable Long id) {
+        return facilityServiceImpl.deleteFacility(id);
+    }
+
 }

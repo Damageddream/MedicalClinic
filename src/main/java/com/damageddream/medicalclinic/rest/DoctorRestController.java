@@ -43,4 +43,9 @@ public class DoctorRestController {
     public DoctorDTO deleteDoctor(@PathVariable Long id) {
         return doctorServiceImpl.deleteDoctor(id);
     }
+
+    @PutMapping("/{id}")
+    public DoctorDTO updateDoctor(@PathVariable Long id, @RequestBody NewDoctorDTO doctor) {
+        return doctorServiceImpl.update(id, doctor);
+    }
 }

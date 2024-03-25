@@ -47,5 +47,4 @@ public class PatientRestController {
     public PatientDTO deletePatient(@PathVariable String patientEmail) {
         return patientService.delete(patientEmail);
     }
-
 }

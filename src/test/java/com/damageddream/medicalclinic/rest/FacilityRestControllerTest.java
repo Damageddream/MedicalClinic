@@ -1,6 +1,9 @@
 package com.damageddream.medicalclinic.rest;
 
-import com.damageddream.medicalclinic.dto.*;
+import com.damageddream.medicalclinic.dto.DoctorDTO;
+import com.damageddream.medicalclinic.dto.FacilityDTO;
+import com.damageddream.medicalclinic.dto.GetIdCommand;
+import com.damageddream.medicalclinic.dto.NewFacilityDTO;
 import com.damageddream.medicalclinic.exception.FacilityAlreadyExistsException;
 import com.damageddream.medicalclinic.exception.FacilityNotFoundException;
 import com.damageddream.medicalclinic.service.FacilityServiceImpl;
@@ -16,11 +19,12 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -45,8 +49,8 @@ public class FacilityRestControllerTest {
 
         //when /then
         mockMvc.perform(post("/facilities")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(newFacilityDTO)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(newFacilityDTO)))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value("Fac2"))
@@ -100,12 +104,12 @@ public class FacilityRestControllerTest {
         FacilityDTO facilityDTO = TestDataFactory.createFacilityDTO("Fac", "Warsaw");
         GetIdCommand getIdCommand = new GetIdCommand(1L);
 
-        when(facilityService.addDoctorToFacility(1L,getIdCommand)).thenReturn(facilityDTO);
+        when(facilityService.addDoctorToFacility(1L, getIdCommand)).thenReturn(facilityDTO);
 
         //when //then
         mockMvc.perform(put("/facilities/{id}/doctors", 1L)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(getIdCommand)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(getIdCommand)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Fac"))
@@ -167,7 +171,66 @@ public class FacilityRestControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    @Test
+    void deleteFacility_facilityExists_returnFacilityDTO() throws Exception {
+        //given
+        FacilityDTO facilityDTO = TestDataFactory.createFacilityDTO("Fac", "Warsaw");
+        when(facilityService.deleteFacility(any())).thenReturn(facilityDTO);
 
+        //when//then
+        mockMvc.perform(delete("/facilities/{id}", 1L))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Fac"))
+                .andExpect(jsonPath("$.city").value("Warsaw"))
+                .andExpect(jsonPath("$.zipCode").value("212Dto"))
+                .andExpect(jsonPath("$.street").value("Dto avenue "))
+                .andExpect(jsonPath("$.buildingNo").value("5"));
+    }
 
+    @Test
+    void deleteFacility_facilityNotExists_returnNotFoundStatus() throws Exception {
+        //given
+        when(facilityService.deleteFacility(1L)).thenThrow(FacilityNotFoundException.class);
+
+        //when //then
+        mockMvc.perform(delete("/facilities/{id}", 1L))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void putFacility_facilityExists_returnFacilityDTO() throws Exception {
+        //given
+        NewFacilityDTO newFacilityDTO = TestDataFactory.createNewFacilityDTO("Fac", "Warsaw");
+        FacilityDTO facilityDTO = TestDataFactory.createFacilityDTO("Fac2", "Warsaw2");
+        when(facilityService.update(any(), any())).thenReturn(facilityDTO);
+
+        //when /then
+        mockMvc.perform(put("/facilities/{id}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(newFacilityDTO)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Fac2"))
+                .andExpect(jsonPath("$.city").value("Warsaw2"))
+                .andExpect(jsonPath("$.zipCode").value("212Dto"))
+                .andExpect(jsonPath("$.street").value("Dto avenue "))
+                .andExpect(jsonPath("$.buildingNo").value("5"));
+    }
+
+    @Test
+    void putFacility_facilityNotExists_returnFacilityDTO() throws Exception {
+        //given
+        NewFacilityDTO newFacilityDTO = TestDataFactory.createNewFacilityDTO("Fac", "Warsaw");
+        when(facilityService.update(any(), any())).thenThrow(FacilityNotFoundException.class);
+
+        //when /then
+        mockMvc.perform(put("/facilities/{id}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(newFacilityDTO)))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
 
 }

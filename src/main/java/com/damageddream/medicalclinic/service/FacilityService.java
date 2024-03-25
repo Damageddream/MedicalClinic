@@ -15,4 +15,8 @@ public interface FacilityService {
     FacilityDTO save(NewFacilityDTO newFacilityDTO);
 
     FacilityDTO addDoctorToFacility(Long facilityId, GetIdCommand entityId);
+
+    FacilityDTO update(Long id, NewFacilityDTO newFacility);
+
+    FacilityDTO deleteFacility(Long id);
 }

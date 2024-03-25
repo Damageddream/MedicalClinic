@@ -26,7 +26,7 @@ public class Doctor {
     private String firstName;
     private String lastName;
     private String specialization;
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany
     @OnDelete(action = OnDeleteAction.SET_NULL)
     @JoinTable(
             name = "doctor_facility",

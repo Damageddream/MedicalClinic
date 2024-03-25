@@ -218,4 +218,35 @@ public class DoctorServiceTest {
                 () -> doctorService.deleteDoctor(1L));
         assertEquals("Doctor not found", ex.getMessage());
     }
+
+    @Test
+    void updateDoctor_doctorExists_returnDoctorDTO() {
+        //given
+        Doctor doctor = TestDataFactory.createDoctor("doc@email.com", "DocOne");
+        NewDoctorDTO newDoctorDTO = TestDataFactory.createNewDoctorDTO("doc@email.com", "DocOne");
+
+        when(doctorRepository.findById(any())).thenReturn(Optional.of(doctor));
+
+        //when
+        var result = doctorService.update(1L, newDoctorDTO);
+
+        //then
+        assertNotNull(result);
+        assertEquals("doc@email.com", result.getEmail());
+        assertEquals("DocOne", result.getFirstName());
+        assertEquals("NewDoctorDTO", result.getLastName());
+        assertEquals("surgeonNewDto", result.getSpecialization());
+    }
+
+    @Test
+    void updateDoctor_doctorNotExists_throwsDoctorNotFoundException() {
+        //given
+        NewDoctorDTO newDoctorDTO = TestDataFactory.createNewDoctorDTO("doc@email.com", "DocOne");
+        when(doctorRepository.findById(any())).thenReturn(Optional.empty());
+
+        //then//when
+        DoctorNotFoundException ex = assertThrows(DoctorNotFoundException.class,
+                () -> doctorService.update(1L, newDoctorDTO));
+        assertEquals("Doctor not found", ex.getMessage());
+    }
 }
