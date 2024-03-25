@@ -91,7 +91,6 @@ public class FacilityServiceImpl implements FacilityService {
             doctor.getFacilities().remove(facility);
         }
         facility.getDoctors().clear();
-
         facilityRepository.delete(facility);
         return facilityMapper.toDTO(facility);
     }
