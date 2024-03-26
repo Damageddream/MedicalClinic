@@ -135,7 +135,42 @@ public class AppointmentServiceTest {
         when(appointmentMapper.toDTO(any())).thenReturn(appointmentDTO1, appointmentDTO2);
 
         //when
-        var result = appointmentService.getFreeAppointmentsByDoctor(1L);
+        var result = appointmentService.getDoctorAppointments(1L, true);
+
+        assertNotNull(result);
+        assertEquals(LocalDateTime.of(2024, 3, 22, 15, 30, 10)
+                , result.get(0).getAppointmentStart());
+        assertEquals(LocalDateTime.of(2024, 3, 22, 16, 30, 10)
+                , result.get(0).getAppointmentEnd());
+        assertEquals(LocalDateTime.of(2024, 3, 22, 13, 30, 10),
+                result.get(1).getAppointmentStart());
+        assertEquals(LocalDateTime.of(2024, 3, 22, 14, 30, 10),
+                result.get(1).getAppointmentEnd());
+    }
+
+    @Test
+    void getAllAppointmentsByDoctor_areAllAppointments_returnListOfAppointmentsDTO() {
+        //given
+        Appointment appointment1 = TestDataFactory.createAppointment(
+                LocalDateTime.of(2024, 3, 22, 15, 30, 10),
+                LocalDateTime.of(2024, 3, 22, 16, 30, 10));
+        Appointment appointment2 = TestDataFactory.createAppointment(
+                LocalDateTime.of(2024, 3, 22, 13, 30, 10),
+                LocalDateTime.of(2024, 3, 22, 14, 30, 10));
+        List<Appointment> appointments = List.of(appointment1, appointment2);
+
+        AppointmentDTO appointmentDTO1 = TestDataFactory.createAppointmentDTO(
+                LocalDateTime.of(2024, 3, 22, 15, 30, 10),
+                LocalDateTime.of(2024, 3, 22, 16, 30, 10));
+        AppointmentDTO appointmentDTO2 = TestDataFactory.createAppointmentDTO(
+                LocalDateTime.of(2024, 3, 22, 13, 30, 10),
+                LocalDateTime.of(2024, 3, 22, 14, 30, 10));
+
+        when(appointmentRepository.findByDoctorId(any())).thenReturn(appointments);
+        when(appointmentMapper.toDTO(any())).thenReturn(appointmentDTO1, appointmentDTO2);
+
+        //when
+        var result = appointmentService.getDoctorAppointments(1L, false);
 
         assertNotNull(result);
         assertEquals(LocalDateTime.of(2024, 3, 22, 15, 30, 10)
@@ -155,7 +190,18 @@ public class AppointmentServiceTest {
 
         //when then
         AppointmentNotFoundException ex = assertThrows(AppointmentNotFoundException.class,
-                () -> appointmentService.getFreeAppointmentsByDoctor(any()));
+                () -> appointmentService.getDoctorAppointments(any(), true));
+        assertEquals("There are no free appointments for this doctor", ex.getMessage());
+    }
+
+    @Test
+    void getAllAppointmentsByDoctor_noAppointments_throwAppointmentNotFoundException() {
+        //given
+        when(appointmentRepository.findByDoctorId(any())).thenReturn(Collections.emptyList());
+
+        //when then
+        AppointmentNotFoundException ex = assertThrows(AppointmentNotFoundException.class,
+                () -> appointmentService.getDoctorAppointments(any(), false));
         assertEquals("There are no free appointments for this doctor", ex.getMessage());
     }
 
@@ -260,7 +306,7 @@ public class AppointmentServiceTest {
                 LocalDateTime.of(2024, 3, 22, 14, 30, 10));
 
         when(patientRepository.findById(any())).thenReturn(Optional.of(patient));
-        when(appointmentRepository.findAppointmentsByPatient(any())).thenReturn(appointments);
+        when(appointmentRepository.findByPatientId(any())).thenReturn(appointments);
         when(appointmentMapper.toDTO(any())).thenReturn(appointmentDTO1, appointmentDTO2);
 
         //when
@@ -295,12 +341,104 @@ public class AppointmentServiceTest {
         Patient patient = TestDataFactory.createPatient("marc@email.com", "Marcin");
 
         when(patientRepository.findById(any())).thenReturn(Optional.of(patient));
-        when(appointmentRepository.findAppointmentsByPatient(any())).thenReturn(Collections.emptyList());
+        when(appointmentRepository.findByPatientId(any())).thenReturn(Collections.emptyList());
 
         //when then
         AppointmentNotFoundException ex = assertThrows(AppointmentNotFoundException.class,
                 () -> appointmentService.getPatientsAppointments(any()));
         assertEquals("Patient don't have any appointments", ex.getMessage());
+    }
+
+    @Test
+    void getFreeAppointments_areFreeAppointments_returnListOfAppointmentsDTO() {
+        //given
+        Appointment appointment1 = TestDataFactory.createAppointment(
+                LocalDateTime.of(2024, 3, 22, 15, 30, 10),
+                LocalDateTime.of(2024, 3, 22, 16, 30, 10));
+        Appointment appointment2 = TestDataFactory.createAppointment(
+                LocalDateTime.of(2024, 3, 22, 13, 30, 10),
+                LocalDateTime.of(2024, 3, 22, 14, 30, 10));
+        List<Appointment> appointments = List.of(appointment1, appointment2);
+
+        AppointmentDTO appointmentDTO1 = TestDataFactory.createAppointmentDTO(
+                LocalDateTime.of(2024, 3, 22, 15, 30, 10),
+                LocalDateTime.of(2024, 3, 22, 16, 30, 10));
+        AppointmentDTO appointmentDTO2 = TestDataFactory.createAppointmentDTO(
+                LocalDateTime.of(2024, 3, 22, 13, 30, 10),
+                LocalDateTime.of(2024, 3, 22, 14, 30, 10));
+
+        when(appointmentRepository.findByPatientIsNull()).thenReturn(appointments);
+        when(appointmentMapper.toDTO(any())).thenReturn(appointmentDTO1, appointmentDTO2);
+
+        //when
+        var result = appointmentService.getAppointments(true);
+
+        assertNotNull(result);
+        assertEquals(LocalDateTime.of(2024, 3, 22, 15, 30, 10)
+                , result.get(0).getAppointmentStart());
+        assertEquals(LocalDateTime.of(2024, 3, 22, 16, 30, 10)
+                , result.get(0).getAppointmentEnd());
+        assertEquals(LocalDateTime.of(2024, 3, 22, 13, 30, 10),
+                result.get(1).getAppointmentStart());
+        assertEquals(LocalDateTime.of(2024, 3, 22, 14, 30, 10),
+                result.get(1).getAppointmentEnd());
+    }
+
+    @Test
+    void getAppointments_areAppointments_returnListOfAppointmentsDTO() {
+        //given
+        Appointment appointment1 = TestDataFactory.createAppointment(
+                LocalDateTime.of(2024, 3, 22, 15, 30, 10),
+                LocalDateTime.of(2024, 3, 22, 16, 30, 10));
+        Appointment appointment2 = TestDataFactory.createAppointment(
+                LocalDateTime.of(2024, 3, 22, 13, 30, 10),
+                LocalDateTime.of(2024, 3, 22, 14, 30, 10));
+        List<Appointment> appointments = List.of(appointment1, appointment2);
+
+        AppointmentDTO appointmentDTO1 = TestDataFactory.createAppointmentDTO(
+                LocalDateTime.of(2024, 3, 22, 15, 30, 10),
+                LocalDateTime.of(2024, 3, 22, 16, 30, 10));
+        AppointmentDTO appointmentDTO2 = TestDataFactory.createAppointmentDTO(
+                LocalDateTime.of(2024, 3, 22, 13, 30, 10),
+                LocalDateTime.of(2024, 3, 22, 14, 30, 10));
+
+        when(appointmentRepository.findAll()).thenReturn(appointments);
+        when(appointmentMapper.toDTO(any())).thenReturn(appointmentDTO1, appointmentDTO2);
+
+        //when
+        var result = appointmentService.getAppointments(false);
+
+        assertNotNull(result);
+        assertEquals(LocalDateTime.of(2024, 3, 22, 15, 30, 10)
+                , result.get(0).getAppointmentStart());
+        assertEquals(LocalDateTime.of(2024, 3, 22, 16, 30, 10)
+                , result.get(0).getAppointmentEnd());
+        assertEquals(LocalDateTime.of(2024, 3, 22, 13, 30, 10),
+                result.get(1).getAppointmentStart());
+        assertEquals(LocalDateTime.of(2024, 3, 22, 14, 30, 10),
+                result.get(1).getAppointmentEnd());
+    }
+
+    @Test
+    void getAllAppointments_noAppointments_throwAppointmentNotFoundException() {
+        //given
+        when(appointmentRepository.findAll()).thenReturn(Collections.emptyList());
+
+        //when then
+        AppointmentNotFoundException ex = assertThrows(AppointmentNotFoundException.class,
+                () -> appointmentService.getAppointments(false));
+        assertEquals("We have no appointments at this time", ex.getMessage());
+    }
+
+    @Test
+    void getAllFreeAppointments_noFreeAppointments_throwAppointmentNotFoundException() {
+        //given
+        when(appointmentRepository.findByPatientIsNull()).thenReturn(Collections.emptyList());
+
+        //when then
+        AppointmentNotFoundException ex = assertThrows(AppointmentNotFoundException.class,
+                () -> appointmentService.getAppointments(true));
+        assertEquals("We have no appointments at this time", ex.getMessage());
     }
 
 }

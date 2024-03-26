@@ -56,7 +56,8 @@ public class AppointmentControllerTest {
         when(appointmentService.addAppointment(any(), any())).thenReturn(appointmentDTO);
 
         //when //then
-        mockMvc.perform(post("/appointments/doctor/{id}", 1L)
+        mockMvc.perform(post("/appointments")
+                        .param("doctorId", "1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(appointment)))
                 .andDo(print())
@@ -71,7 +72,7 @@ public class AppointmentControllerTest {
     }
 
     @Test
-    void getAppointments_appointmentsExists_returnAppointmentsDTOList() throws Exception {
+    void getFreeAppointmentsByDoctor_appointmentsExists_returnAppointmentsDTOList() throws Exception {
         //given
         AppointmentDTO appointmentDTO1 = TestDataFactory.createAppointmentDTO(
                 LocalDateTime.of(2024, 3, 22, 15, 30, 10),
@@ -81,10 +82,11 @@ public class AppointmentControllerTest {
                 LocalDateTime.of(2024, 3, 22, 14, 30, 10));
         List<AppointmentDTO> appointments = List.of(appointmentDTO1, appointmentDTO2);
 
-        when(appointmentService.getFreeAppointmentsByDoctor(any())).thenReturn(appointments);
+        when(appointmentService.getDoctorAppointments(any(), any())).thenReturn(appointments);
 
         //when //then
-        mockMvc.perform(get("/appointments/doctor/{id}/free", 1L))
+        mockMvc.perform(get("/appointments/doctor/{id}", 1L)
+                        .param("onlyFree", "true"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].appointmentStart").value("2024-03-22T15:30:10"))
@@ -92,6 +94,31 @@ public class AppointmentControllerTest {
                 .andExpect(jsonPath("$[1].appointmentStart").value("2024-03-22T13:30:10"))
                 .andExpect(jsonPath("$[1].appointmentEnd").value("2024-03-22T14:30:10"));
     }
+
+    @Test
+    void getAllAppointmentsByDoctor_appointmentsExists_returnAppointmentsDTOList() throws Exception {
+        //given
+        AppointmentDTO appointmentDTO1 = TestDataFactory.createAppointmentDTO(
+                LocalDateTime.of(2024, 3, 22, 15, 30, 10),
+                LocalDateTime.of(2024, 3, 22, 16, 30, 10));
+        AppointmentDTO appointmentDTO2 = TestDataFactory.createAppointmentDTO(
+                LocalDateTime.of(2024, 3, 22, 13, 30, 10),
+                LocalDateTime.of(2024, 3, 22, 14, 30, 10));
+        List<AppointmentDTO> appointments = List.of(appointmentDTO1, appointmentDTO2);
+
+        when(appointmentService.getDoctorAppointments(any(), any())).thenReturn(appointments);
+
+        //when //then
+        mockMvc.perform(get("/appointments/doctor/{id}", 1L)
+                        .param("onlyFree", "false"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].appointmentStart").value("2024-03-22T15:30:10"))
+                .andExpect(jsonPath("$[0].appointmentEnd").value("2024-03-22T16:30:10"))
+                .andExpect(jsonPath("$[1].appointmentStart").value("2024-03-22T13:30:10"))
+                .andExpect(jsonPath("$[1].appointmentEnd").value("2024-03-22T14:30:10"));
+    }
+
 
     @Test
     void patchAppointment_appointmentExists_returnAppointmentDTO() throws Exception {
@@ -104,7 +131,8 @@ public class AppointmentControllerTest {
         when(appointmentService.makeAnAppointment(any(), any())).thenReturn(appointmentDTO);
 
         //when //then
-        mockMvc.perform(patch("/appointments/patient/{id}", 1L)
+        mockMvc.perform(patch("/appointments")
+                        .param("patientId", "1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(appointmentId)))
                 .andDo(print())
@@ -152,7 +180,8 @@ public class AppointmentControllerTest {
         when(appointmentService.addAppointment(any(), any())).thenThrow(DoctorNotFoundException.class);
 
         //when //then
-        mockMvc.perform(post("/appointments/doctor/{id}", 1L)
+        mockMvc.perform(post("/appointments")
+                        .param("doctorId", "1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(appointment)))
                 .andDo(print())
@@ -170,7 +199,8 @@ public class AppointmentControllerTest {
         when(appointmentService.addAppointment(any(), any())).thenThrow(InvalidDateTimeException.class);
 
         //when //then
-        mockMvc.perform(post("/appointments/doctor/{id}", 1L)
+        mockMvc.perform(post("/appointments")
+                        .param("doctorId", "1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(appointment)))
                 .andDo(print())
@@ -178,12 +208,25 @@ public class AppointmentControllerTest {
     }
 
     @Test
-    void getAppointments_appointmentsNotExists_returnNotFoundStatus() throws Exception {
+    void getAllAppointmentsByDoctor_appointmentsNotExists_returnNotFoundStatus() throws Exception {
         //given
-        when(appointmentService.getFreeAppointmentsByDoctor(any())).thenThrow(AppointmentNotFoundException.class);
+        when(appointmentService.getDoctorAppointments(any(), any())).thenThrow(AppointmentNotFoundException.class);
 
         //when //then
-        mockMvc.perform(get("/appointments/doctor/{id}/free", 1L))
+        mockMvc.perform(get("/appointments/doctor/{id}", 1L)
+                        .param("onlyFree", "false"))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void getFreeAppointmentsByDoctor_appointmentsNotExists_returnNotFoundStatus() throws Exception {
+        //given
+        when(appointmentService.getDoctorAppointments(any(), any())).thenThrow(AppointmentNotFoundException.class);
+
+        //when //then
+        mockMvc.perform(get("/appointments/doctor/{id}", 1L)
+                        .param("onlyFree", "true"))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
@@ -199,7 +242,8 @@ public class AppointmentControllerTest {
         when(appointmentService.makeAnAppointment(any(), any())).thenThrow(PatientNotFoundException.class);
 
         //when //then
-        mockMvc.perform(patch("/appointments/patient/{id}", 1L)
+        mockMvc.perform(patch("/appointments")
+                        .param("patientId", "1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(appointmentId)))
                 .andDo(print())
@@ -217,7 +261,8 @@ public class AppointmentControllerTest {
         when(appointmentService.makeAnAppointment(any(), any())).thenThrow(AppointmentNotFoundException.class);
 
         //when //then
-        mockMvc.perform(patch("/appointments/patient/{id}", 1L)
+        mockMvc.perform(patch("/appointments")
+                        .param("patientId", "1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(appointmentId)))
                 .andDo(print())
@@ -246,4 +291,75 @@ public class AppointmentControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    @Test
+    void getAllAppointments_AppointmentsExists_returnAppointmentsDTOList() throws Exception {
+        //given
+        AppointmentDTO appointmentDTO1 = TestDataFactory.createAppointmentDTO(
+                LocalDateTime.of(2024, 3, 22, 15, 30, 10),
+                LocalDateTime.of(2024, 3, 22, 16, 30, 10));
+        AppointmentDTO appointmentDTO2 = TestDataFactory.createAppointmentDTO(
+                LocalDateTime.of(2024, 3, 22, 13, 30, 10),
+                LocalDateTime.of(2024, 3, 22, 14, 30, 10));
+        List<AppointmentDTO> appointments = List.of(appointmentDTO1, appointmentDTO2);
+
+        when(appointmentService.getAppointments(any())).thenReturn(appointments);
+
+        //when //then
+        mockMvc.perform(get("/appointments")
+                        .param("onlyFree", "false"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].appointmentStart").value("2024-03-22T15:30:10"))
+                .andExpect(jsonPath("$[0].appointmentEnd").value("2024-03-22T16:30:10"))
+                .andExpect(jsonPath("$[1].appointmentStart").value("2024-03-22T13:30:10"))
+                .andExpect(jsonPath("$[1].appointmentEnd").value("2024-03-22T14:30:10"));
+    }
+
+    @Test
+    void getFreeAppointments_AppointmentsExists_returnAppointmentsDTOList() throws Exception {
+        //given
+        AppointmentDTO appointmentDTO1 = TestDataFactory.createAppointmentDTO(
+                LocalDateTime.of(2024, 3, 22, 15, 30, 10),
+                LocalDateTime.of(2024, 3, 22, 16, 30, 10));
+        AppointmentDTO appointmentDTO2 = TestDataFactory.createAppointmentDTO(
+                LocalDateTime.of(2024, 3, 22, 13, 30, 10),
+                LocalDateTime.of(2024, 3, 22, 14, 30, 10));
+        List<AppointmentDTO> appointments = List.of(appointmentDTO1, appointmentDTO2);
+
+        when(appointmentService.getAppointments(any())).thenReturn(appointments);
+
+        //when //then
+        mockMvc.perform(get("/appointments")
+                        .param("onlyFree", "true"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].appointmentStart").value("2024-03-22T15:30:10"))
+                .andExpect(jsonPath("$[0].appointmentEnd").value("2024-03-22T16:30:10"))
+                .andExpect(jsonPath("$[1].appointmentStart").value("2024-03-22T13:30:10"))
+                .andExpect(jsonPath("$[1].appointmentEnd").value("2024-03-22T14:30:10"));
+    }
+
+    @Test
+    void getFreeAppointments_appointmentsNotExists_returnNotFoundStatus() throws Exception {
+        //given
+        when(appointmentService.getAppointments(any())).thenThrow(AppointmentNotFoundException.class);
+
+        //when //then
+        mockMvc.perform(get("/appointments")
+                        .param("onlyFree", "true"))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void getAppointments_appointmentsNotExists_returnNotFoundStatus() throws Exception {
+        //given
+        when(appointmentService.getAppointments(any())).thenThrow(AppointmentNotFoundException.class);
+
+        //when //then
+        mockMvc.perform(get("/appointments")
+                        .param("onlyFree", "false"))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
 }

@@ -16,24 +16,29 @@ import java.util.List;
 public class AppointmentRestController {
     private final AppointmentService appointmentService;
 
-    @PostMapping("/doctor/{id}")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public AppointmentDTO addAppointment(@PathVariable Long id, @RequestBody Appointment appointment) {
-        return appointmentService.addAppointment(id, appointment);
+    public AppointmentDTO addAppointment(@RequestParam Long doctorId, @RequestBody Appointment appointment) {
+        return appointmentService.addAppointment(doctorId, appointment);
     }
 
-    @GetMapping("/doctor/{id}/free")
-    public List<AppointmentDTO> getFreeAppointments(@PathVariable Long id) {
-        return appointmentService.getFreeAppointmentsByDoctor(id);
+    @GetMapping("/doctor/{id}")
+    public List<AppointmentDTO> getDoctorAppointments(@PathVariable Long id, @RequestParam Boolean onlyFree) {
+        return appointmentService.getDoctorAppointments(id, onlyFree);
     }
 
-    @PatchMapping("/patient/{id}")
-    public AppointmentDTO patchAppointment(@PathVariable Long id, @RequestBody GetIdCommand appointmentId) {
-        return appointmentService.makeAnAppointment(id, appointmentId);
+    @PatchMapping
+    public AppointmentDTO patchAppointment(@RequestParam Long patientId, @RequestBody GetIdCommand appointmentId) {
+        return appointmentService.makeAnAppointment(patientId, appointmentId);
     }
 
     @GetMapping("/patient/{id}")
-    public List<AppointmentDTO> getAppointments(@PathVariable Long id) {
+    public List<AppointmentDTO> getPatientAppointments(@PathVariable Long id) {
         return appointmentService.getPatientsAppointments(id);
+    }
+
+    @GetMapping
+    public List<AppointmentDTO> getAppointments(@RequestParam Boolean onlyFree){
+        return appointmentService.getAppointments(onlyFree);
     }
 }

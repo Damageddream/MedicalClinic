@@ -13,5 +13,7 @@ public interface AppointmentService {
 
     AppointmentDTO addAppointment(Long doctorId, Appointment appointment);
 
-    List<AppointmentDTO> getFreeAppointmentsByDoctor(Long doctorId);
+    List<AppointmentDTO> getDoctorAppointments(Long doctorId, Boolean onlyFree);
+
+    List<AppointmentDTO> getAppointments(Boolean onlyFree);
 }

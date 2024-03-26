@@ -9,6 +9,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
+
+    List<Appointment> findByDoctorId(Long doctorId);
+    List<Appointment> findByPatientId(Long patientId);
+    List<Appointment> findByPatientIsNull();
     @Query("SELECT a FROM Appointment a WHERE :doctorId = a.doctor.id AND" +
             "(a.appointmentStart <=:newAppointmentEnd AND a.appointmentEnd >=:newAppointmentStart)")
     List<Appointment> findConflictingAppointments(
@@ -19,6 +23,6 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     @Query("SELECT a FROM Appointment a WHERE a.doctor.id = :doctorId AND a.patient IS NULL")
     List<Appointment> findFreeAppointmentsByDoctor(@Param("doctorId") Long doctorId);
 
-    @Query("SELECT a FROM Appointment a WHERE a.patient.id = :patientId")
-    List<Appointment> findAppointmentsByPatient(@Param("patientId") Long patientId);
+//    @Query("SELECT a FROM Appointment a WHERE a.patient.id = :patientId")
+//    List<Appointment> findByPatient(@Param("patientId") Long patientId);
 }

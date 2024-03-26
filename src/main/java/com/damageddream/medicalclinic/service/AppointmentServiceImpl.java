@@ -29,6 +29,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final DoctorRepository doctorRepository;
     private final AppointmentRepository appointmentRepository;
     private final DataValidator dataValidator;
+
     @Override
     @Transactional
     public AppointmentDTO addAppointment(Long doctorId, Appointment appointment) {
@@ -46,8 +47,10 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public List<AppointmentDTO> getFreeAppointmentsByDoctor(Long doctorId) {
-        List<Appointment> appointments = appointmentRepository.findFreeAppointmentsByDoctor(doctorId);
+    public List<AppointmentDTO> getDoctorAppointments(Long doctorId, Boolean onlyFree) {
+        List<Appointment> appointments = onlyFree ?
+                appointmentRepository.findFreeAppointmentsByDoctor(doctorId) :
+                appointmentRepository.findByDoctorId(doctorId);
         if (appointments.isEmpty()) {
             throw new AppointmentNotFoundException("There are no free appointments for this doctor");
         }
@@ -72,12 +75,26 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public List<AppointmentDTO> getPatientsAppointments(Long id) {
-        Patient patient = patientRepository.findById(id).orElseThrow(() -> new PatientNotFoundException("Patient not found"));
-        List<Appointment> appointments = appointmentRepository.findAppointmentsByPatient(id);
+        patientRepository.findById(id)
+                .orElseThrow(() -> new PatientNotFoundException("Patient not found"));
+        List<Appointment> appointments = appointmentRepository.findByPatientId(id);
         if (appointments.isEmpty()) {
             throw new AppointmentNotFoundException("Patient don't have any appointments");
         }
 
         return appointments.stream().map(appointmentMapper::toDTO).toList();
     }
+
+    @Override
+    public List<AppointmentDTO> getAppointments(Boolean onlyFree) {
+        List<Appointment> appointments = onlyFree ?
+                appointmentRepository.findByPatientIsNull() :
+                appointmentRepository.findAll();
+
+        if (appointments.isEmpty()) {
+            throw new AppointmentNotFoundException("We have no appointments at this time");
+        }
+        return appointments.stream().map(appointmentMapper::toDTO).toList();
+    }
+
 }
