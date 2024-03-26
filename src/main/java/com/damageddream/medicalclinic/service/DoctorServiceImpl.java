@@ -28,18 +28,21 @@ public class DoctorServiceImpl implements DoctorService {
     private final DoctorMapper doctorMapper;
     private final FacilityMapper facilityMapper;
 
+
     @Override
     public DoctorDTO findById(Long id) {
         Doctor doctor = doctorRepository.findById(id)
                 .orElseThrow(() -> new DoctorNotFoundException("Doctor not found"));
         return doctorMapper.toDTO(doctor);
     }
+
     @Override
     public List<FacilityDTO> findFacilitiesByDoctor(Long id) {
         Doctor doctor = doctorRepository.findById(id)
                 .orElseThrow(() -> new DoctorNotFoundException("Doctor not found"));
         return doctor.getFacilities().stream().map(facilityMapper::toDTO).toList();
     }
+
     @Override
     @Transactional
     public DoctorDTO save(NewDoctorDTO newDoctorDTO) {
@@ -51,6 +54,7 @@ public class DoctorServiceImpl implements DoctorService {
         doctorRepository.save(doctor);
         return doctorMapper.toDTO(doctor);
     }
+
     @Override
     @Transactional
     public DoctorDTO addFacilityToDoctor(Long doctorId, GetIdCommand entityId) {
@@ -60,11 +64,29 @@ public class DoctorServiceImpl implements DoctorService {
         Facility facility = facilityRepository.findById(entityId.getEntityId())
                 .orElseThrow(() -> new FacilityNotFoundException("Facility not found"));
 
-        if(doctor.getFacilities().contains(facility)){
+        if (doctor.getFacilities().contains(facility)) {
             throw new FacilityAlreadyExistsException("Facility already is this doctor employer");
         }
-
         doctor.getFacilities().add(facility);
+        doctorRepository.save(doctor);
+        return doctorMapper.toDTO(doctor);
+    }
+
+    @Override
+    @Transactional
+    public DoctorDTO deleteDoctor(Long id) {
+        Doctor doctor = doctorRepository.findById(id)
+                .orElseThrow(() -> new DoctorNotFoundException("Doctor not found"));
+        doctorRepository.delete(doctor);
+        return doctorMapper.toDTO(doctor);
+    }
+
+    @Override
+    @Transactional
+    public DoctorDTO update(Long id, NewDoctorDTO newDoctor) {
+        Doctor doctor = doctorRepository.findById(id)
+                .orElseThrow(() -> new DoctorNotFoundException("Doctor not found"));
+        doctorMapper.updateDoctorFromDTO(newDoctor, doctor);
         doctorRepository.save(doctor);
         return doctorMapper.toDTO(doctor);
     }

@@ -24,7 +24,7 @@ public class FacilityRestController {
     }
 
     @GetMapping("/{id}/doctors")
-    public List<DoctorDTO> getFacilityDoctors(@PathVariable Long id){
+    public List<DoctorDTO> getFacilityDoctors(@PathVariable Long id) {
         return facilityServiceImpl.findDoctorsByFacility(id);
     }
 
@@ -37,6 +37,16 @@ public class FacilityRestController {
     @PutMapping("/{id}/doctors")
     public FacilityDTO addDoctor(@PathVariable Long id, @RequestBody GetIdCommand entityId) {
         return facilityServiceImpl.addDoctorToFacility(id, entityId);
+    }
+
+    @PutMapping("/{id}")
+    public FacilityDTO updateFacility(@PathVariable Long id, @RequestBody NewFacilityDTO facility){
+        return facilityServiceImpl.update(id, facility);
+    }
+
+    @DeleteMapping("/{id}")
+    public FacilityDTO deleteFacility(@PathVariable Long id) {
+        return facilityServiceImpl.deleteFacility(id);
     }
 
 }

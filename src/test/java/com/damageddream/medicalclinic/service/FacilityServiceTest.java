@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 public class FacilityServiceTest {
@@ -69,7 +70,7 @@ public class FacilityServiceTest {
 
         //then //when
         FacilityNotFoundException ex = assertThrows(FacilityNotFoundException.class,
-                ()-> facilityService.findById(1L));
+                () -> facilityService.findById(1L));
         assertEquals("Facility not found", ex.getMessage());
     }
 
@@ -102,7 +103,7 @@ public class FacilityServiceTest {
 
         //when then
         FacilityAlreadyExistsException ex = assertThrows(FacilityAlreadyExistsException.class,
-                ()-> facilityService.save(newFacilityDTO));
+                () -> facilityService.save(newFacilityDTO));
 
         assertEquals("Facility with that name already exists", ex.getMessage());
     }
@@ -139,7 +140,7 @@ public class FacilityServiceTest {
 
         //then //when
         FacilityNotFoundException ex = assertThrows(FacilityNotFoundException.class,
-                ()-> facilityService.findDoctorsByFacility(1L));
+                () -> facilityService.findDoctorsByFacility(1L));
         assertEquals("Facility not found", ex.getMessage());
     }
 
@@ -173,7 +174,7 @@ public class FacilityServiceTest {
 
         //then //when
         FacilityNotFoundException ex = assertThrows(FacilityNotFoundException.class,
-                ()-> facilityService.addDoctorToFacility(2L, getIdCommand));
+                () -> facilityService.addDoctorToFacility(2L, getIdCommand));
         assertEquals("Facility not found", ex.getMessage());
     }
 
@@ -188,8 +189,68 @@ public class FacilityServiceTest {
 
         //then //when
         DoctorNotFoundException ex = assertThrows(DoctorNotFoundException.class,
-                ()-> facilityService.addDoctorToFacility(2L, getIdCommand));
+                () -> facilityService.addDoctorToFacility(2L, getIdCommand));
         assertEquals("Doctor not found", ex.getMessage());
     }
 
+    @Test
+    void deleteFacility_facilityExists_returnFacilityDTO() {
+        //given
+        Facility facility = TestDataFactory.createFacility("Fac", "Warsaw");
+        when(facilityRepository.findById(any())).thenReturn(Optional.of(facility));
+
+        //when
+        var result = facilityService.deleteFacility(1L);
+
+        //then
+        assertNotNull(result);
+        assertEquals("Fac", result.getName());
+        assertEquals("Warsaw", result.getCity());
+        assertEquals("212", result.getZipCode());
+        assertEquals("Hospital avenue", result.getStreet());
+        assertEquals("3", result.getBuildingNo());
+    }
+
+    @Test
+    void deleteFacility_facilityNotExists_facilityNotFoundExceptionThrown() {
+        //given
+        when(facilityRepository.findById(any())).thenReturn(Optional.empty());
+
+        //then //when
+        FacilityNotFoundException ex = assertThrows(FacilityNotFoundException.class,
+                () -> facilityService.deleteFacility(1L));
+        assertEquals("Facility not found", ex.getMessage());
+    }
+
+    @Test
+    void updateFacility_facilityExists_returnFacilityDTO() {
+        //given
+        Facility facility = TestDataFactory.createFacility("Fac", "Warsaw");
+        NewFacilityDTO newFacilityDTO = TestDataFactory.createNewFacilityDTO("NewFac", "Cracow");
+
+        when(facilityRepository.findById(any())).thenReturn(Optional.of(facility));
+
+        //when
+        var result = facilityService.update(1L, newFacilityDTO);
+
+        //then
+        assertNotNull(result);
+        assertEquals("NewFac", result.getName());
+        assertEquals("Cracow", result.getCity());
+        assertEquals("212", result.getZipCode());
+        assertEquals("Hospital avenue", result.getStreet());
+        assertEquals("3", result.getBuildingNo());
+    }
+
+    @Test
+    void updateFacility_facilityNotExists_facilityNotFoundExceptionThrown() {
+        //given
+        NewFacilityDTO newFacilityDTO = TestDataFactory.createNewFacilityDTO("NewFac", "Cracow");
+        when(facilityRepository.findById(any())).thenReturn(Optional.empty());
+
+        //then //when
+        FacilityNotFoundException ex = assertThrows(FacilityNotFoundException.class,
+                () -> facilityService.update(1L, newFacilityDTO));
+        assertEquals("Facility not found", ex.getMessage());
+    }
 }

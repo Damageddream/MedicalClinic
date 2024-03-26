@@ -1,7 +1,10 @@
 package com.damageddream.medicalclinic.dto;
 
 import com.damageddream.medicalclinic.entity.Facility;
-import lombok.*;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 

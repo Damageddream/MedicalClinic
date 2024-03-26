@@ -3,10 +3,12 @@ package com.damageddream.medicalclinic.service;
 import com.damageddream.medicalclinic.dto.ChangePasswordCommand;
 import com.damageddream.medicalclinic.dto.NewPatientDTO;
 import com.damageddream.medicalclinic.dto.PatientDTO;
+import com.damageddream.medicalclinic.dto.mapper.AppointmentMapper;
 import com.damageddream.medicalclinic.dto.mapper.PatientMapper;
 import com.damageddream.medicalclinic.entity.Patient;
 import com.damageddream.medicalclinic.exception.EmailAlreadyExistsException;
 import com.damageddream.medicalclinic.exception.PatientNotFoundException;
+import com.damageddream.medicalclinic.repository.AppointmentRepository;
 import com.damageddream.medicalclinic.repository.PatientRepository;
 import com.damageddream.medicalclinic.util.TestDataFactory;
 import com.damageddream.medicalclinic.validation.DataValidator;
@@ -38,7 +40,8 @@ public class PatientServiceTest {
         this.patientMapper = Mappers.getMapper(PatientMapper.class);
         this.patientRepository = Mockito.mock(PatientRepository.class);
 
-        this.patientService = new PatientServiceImpl(dataValidator, patientMapper, patientRepository);
+        this.patientService = new PatientServiceImpl(dataValidator, patientMapper,
+                patientRepository);
     }
 
     @Test

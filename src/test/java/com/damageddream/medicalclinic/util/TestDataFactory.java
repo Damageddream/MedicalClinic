@@ -1,12 +1,14 @@
 package com.damageddream.medicalclinic.util;
 
 import com.damageddream.medicalclinic.dto.*;
+import com.damageddream.medicalclinic.entity.Appointment;
 import com.damageddream.medicalclinic.entity.Doctor;
 import com.damageddream.medicalclinic.entity.Facility;
 import com.damageddream.medicalclinic.entity.Patient;
 
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -124,6 +126,30 @@ public class TestDataFactory {
 
     public static void addDoctorsToNewFacilityDTO(NewFacilityDTO facility, List<Doctor> doctors) {
         facility.getDoctors().addAll(doctors);
+    }
+
+    public static Appointment createAppointment(LocalDateTime start, LocalDateTime end){
+        return Appointment.builder()
+                .id(1L)
+                .appointmentEnd(end)
+                .appointmentStart(start)
+                .patient(TestDataFactory
+                        .createPatient("mar@mail.com", "Marcin"))
+                .doctor(TestDataFactory
+                        .createDoctor("doc@mail.com", "Doc"))
+                .build();
+    }
+
+    public static AppointmentDTO createAppointmentDTO(LocalDateTime start, LocalDateTime end){
+        return AppointmentDTO.builder()
+                .id(1L)
+                .appointmentEnd(end)
+                .appointmentStart(start)
+                .patient(TestDataFactory
+                        .createPatientDTO("mar@mail.com", "Marcin"))
+                .doctor(TestDataFactory
+                        .createDoctorDTO("doc@mail.com", "Doc"))
+                .build();
     }
 
 }

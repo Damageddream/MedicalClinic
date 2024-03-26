@@ -9,8 +9,14 @@ import java.util.List;
 
 public interface DoctorService {
     DoctorDTO findById(Long id);
+
     List<FacilityDTO> findFacilitiesByDoctor(Long id);
+
     DoctorDTO save(NewDoctorDTO newDoctorDTO);
+
     DoctorDTO addFacilityToDoctor(Long doctorId, GetIdCommand entityId);
 
+    DoctorDTO deleteDoctor(Long id);
+
+    DoctorDTO update(Long id, NewDoctorDTO newDoctor);
 }

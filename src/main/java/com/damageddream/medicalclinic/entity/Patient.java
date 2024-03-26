@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.Objects;
+import java.util.List;
 
 @Entity
 @Data
@@ -28,12 +28,13 @@ public class Patient {
     private String lastName;
     private String phoneNumber;
     private LocalDate birthday;
+    @OneToMany(mappedBy = "patient")
+    private List<Appointment> appointments;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Patient)) return false;
-        Patient other = (Patient) o;
+        if (!(o instanceof Patient other)) return false;
         return id != null && id.equals(other.getId());
     }
 

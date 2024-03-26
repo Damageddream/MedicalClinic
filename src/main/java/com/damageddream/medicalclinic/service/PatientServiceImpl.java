@@ -1,9 +1,9 @@
 package com.damageddream.medicalclinic.service;
 
+import com.damageddream.medicalclinic.dto.ChangePasswordCommand;
 import com.damageddream.medicalclinic.dto.NewPatientDTO;
 import com.damageddream.medicalclinic.dto.PatientDTO;
 import com.damageddream.medicalclinic.dto.mapper.PatientMapper;
-import com.damageddream.medicalclinic.dto.ChangePasswordCommand;
 import com.damageddream.medicalclinic.entity.Patient;
 import com.damageddream.medicalclinic.exception.EmailAlreadyExistsException;
 import com.damageddream.medicalclinic.exception.PatientNotFoundException;
@@ -23,6 +23,7 @@ public class PatientServiceImpl implements PatientService {
     private final DataValidator dataValidator;
     private final PatientMapper patientMapper;
     private final PatientRepository patientRepository;
+
 
     @Override
     @Transactional
@@ -81,8 +82,5 @@ public class PatientServiceImpl implements PatientService {
         return patientMapper.toDTO(toEdit);
     }
 
-    public void testGit() {
-        System.out.println("git commit test");
-    }
 
 }

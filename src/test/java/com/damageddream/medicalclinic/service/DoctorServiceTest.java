@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 public class DoctorServiceTest {
@@ -28,6 +29,7 @@ public class DoctorServiceTest {
     private DoctorMapper doctorMapper;
     private FacilityRepository facilityRepository;
     private DoctorRepository doctorRepository;
+
 
     private DoctorService doctorService;
 
@@ -38,7 +40,9 @@ public class DoctorServiceTest {
         this.facilityRepository = Mockito.mock(FacilityRepository.class);
         this.doctorRepository = Mockito.mock(DoctorRepository.class);
 
-        this.doctorService = new DoctorServiceImpl(doctorRepository, facilityRepository, doctorMapper, facilityMapper);
+
+        this.doctorService = new DoctorServiceImpl(doctorRepository, facilityRepository,
+                doctorMapper, facilityMapper);
     }
 
     @Test
@@ -169,7 +173,7 @@ public class DoctorServiceTest {
 
         //then//when
         DoctorNotFoundException ex = assertThrows(DoctorNotFoundException.class,
-                ()->doctorService.addFacilityToDoctor(2L, getIdCommand));
+                () -> doctorService.addFacilityToDoctor(2L, getIdCommand));
         assertEquals("Doctor not found", ex.getMessage());
     }
 
@@ -183,8 +187,66 @@ public class DoctorServiceTest {
 
         //then//when
         FacilityNotFoundException ex = assertThrows(FacilityNotFoundException.class,
-                ()->doctorService.addFacilityToDoctor(2L, getIdCommand));
+                () -> doctorService.addFacilityToDoctor(2L, getIdCommand));
         assertEquals("Facility not found", ex.getMessage());
     }
 
+    @Test
+    void deleteDoctor_doctorExists_returnDoctorDTO() {
+        //given
+        Doctor doctor = TestDataFactory.createDoctor("doc@email.com", "DocOne");
+        when(doctorRepository.findById(1L)).thenReturn(Optional.of(doctor));
+
+        //when
+        var result = doctorService.deleteDoctor(1L);
+
+        //then
+        assertNotNull(result);
+        assertEquals("DocOne", result.getFirstName());
+        assertEquals("doc@email.com", result.getEmail());
+        assertEquals("Doctor", result.getLastName());
+        assertEquals("surgeon", result.getSpecialization());
+    }
+
+    @Test
+    void deleteDoctor_doctorNotExists_throwsDoctorNotExistsException() {
+        //given
+        when(doctorRepository.findById(1L)).thenReturn(Optional.empty());
+
+        //when //then
+        DoctorNotFoundException ex = assertThrows(DoctorNotFoundException.class,
+                () -> doctorService.deleteDoctor(1L));
+        assertEquals("Doctor not found", ex.getMessage());
+    }
+
+    @Test
+    void updateDoctor_doctorExists_returnDoctorDTO() {
+        //given
+        Doctor doctor = TestDataFactory.createDoctor("doc@email.com", "DocOne");
+        NewDoctorDTO newDoctorDTO = TestDataFactory.createNewDoctorDTO("doc@email.com", "DocOne");
+
+        when(doctorRepository.findById(any())).thenReturn(Optional.of(doctor));
+
+        //when
+        var result = doctorService.update(1L, newDoctorDTO);
+
+        //then
+        assertNotNull(result);
+        assertEquals("doc@email.com", result.getEmail());
+        assertEquals("DocOne", result.getFirstName());
+        assertEquals("NewDoctorDTO", result.getLastName());
+        assertEquals("surgeonNewDto", result.getSpecialization());
+    }
+
+    @Test
+    void updateDoctor_doctorNotExists_throwsDoctorNotFoundException() {
+        //given
+        NewDoctorDTO newDoctorDTO = TestDataFactory.createNewDoctorDTO("doc@email.com", "DocOne");
+        when(doctorRepository.findById(any())).thenReturn(Optional.empty());
+
+        //then//when
+        DoctorNotFoundException ex = assertThrows(DoctorNotFoundException.class,
+                () -> doctorService.update(1L, newDoctorDTO));
+        assertEquals("Doctor not found", ex.getMessage());
+    }
 }

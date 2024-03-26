@@ -10,8 +10,7 @@ import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FacilityMapperTest {
 
@@ -61,6 +60,30 @@ public class FacilityMapperTest {
         assertEquals("DocOne", result.getDoctors().get(0).getFirstName());
         assertEquals("doc2@mail.com", result.getDoctors().get(1).getEmail());
         assertEquals("DocTwo", result.getDoctors().get(1).getFirstName());
+    }
 
+    @Test
+    void updateFacilityFromFacilityDTO_validFacilityDTO_facilityUpdated() {
+        //given
+        NewFacilityDTO newFacilityDTO = TestDataFactory.createNewFacilityDTO("NewFac", "Cracow");
+        Facility facility = TestDataFactory.createFacility("Fac", "Warsaw");
+        Doctor doctor = TestDataFactory.createDoctor("doc1@mail.com", "DocOne");
+        facility.getDoctors().add(doctor);
+
+        //when
+        facilityMapper.updateFacilityFromDTO(newFacilityDTO, facility);
+
+        //then
+        assertNotNull(facility);
+        assertEquals("NewFac", facility.getName());
+        assertEquals("Cracow", facility.getCity());
+        assertEquals("212", facility.getZipCode());
+        assertEquals("3", facility.getBuildingNo());
+        assertEquals("Hospital avenue", facility.getStreet());
+        assertEquals("DocOne", facility.getDoctors().get(0).getFirstName());
+        assertEquals("doc1@mail.com", facility.getDoctors().get(0).getEmail());
+
+        assertNotEquals("Fac", facility.getName());
+        assertNotEquals("Warsaw", facility.getCity());
     }
 }

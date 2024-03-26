@@ -86,6 +86,5 @@ public class PatientMapperTest {
         assertNotEquals("123456", existingPatient.getIdCardNo());
         assertNotEquals("password", existingPatient.getPassword());
         assertNotEquals(LocalDate.of(1900,01,01), existingPatient.getBirthday());
-
     }
 }

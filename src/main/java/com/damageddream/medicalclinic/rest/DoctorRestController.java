@@ -38,4 +38,14 @@ public class DoctorRestController {
     public DoctorDTO addFacility(@PathVariable Long id, @RequestBody GetIdCommand entityId) {
         return doctorServiceImpl.addFacilityToDoctor(id, entityId);
     }
+
+    @DeleteMapping("/{id}")
+    public DoctorDTO deleteDoctor(@PathVariable Long id) {
+        return doctorServiceImpl.deleteDoctor(id);
+    }
+
+    @PutMapping("/{id}")
+    public DoctorDTO updateDoctor(@PathVariable Long id, @RequestBody NewDoctorDTO doctor) {
+        return doctorServiceImpl.update(id, doctor);
+    }
 }

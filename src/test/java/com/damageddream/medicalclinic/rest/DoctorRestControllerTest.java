@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -116,6 +117,33 @@ public class DoctorRestControllerTest {
     }
 
     @Test
+    void deleteDoctor_doctorExists_returnDoctorDTO() throws Exception {
+        //given
+        DoctorDTO doctorDTO = TestDataFactory.createDoctorDTO("doc@email.com", "Doc");
+        when(doctorService.deleteDoctor(1L)).thenReturn(doctorDTO);
+
+        //when//then
+        mockMvc.perform(delete("/doctors/{id}", 1L))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.firstName").value("Doc"))
+                .andExpect(jsonPath("$.lastName").value("doctorDTO"))
+                .andExpect(jsonPath("$.email").value("doc@email.com"))
+                .andExpect(jsonPath("$.specialization").value("surgeonDTO"));
+    }
+
+    @Test
+    void deleteDoctor_doctorNotExists_returnNotFoundStatus() throws Exception {
+        //given
+        when(doctorService.deleteDoctor(any())).thenThrow(DoctorNotFoundException.class);
+
+        //when //then
+        mockMvc.perform(delete("/doctors/{id}", 1L))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     void postDoctor_emailNotUnique_returnConflictStatus() throws Exception {
         //given
         NewDoctorDTO newDoctorDTO = TestDataFactory.createNewDoctorDTO("doc@email.com", "Doc");
@@ -167,4 +195,21 @@ public class DoctorRestControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    @Test
+    void putDoctor_doctorExists_returnDoctorDTO() throws Exception {
+        //given
+        NewDoctorDTO newDoctorDTO = TestDataFactory.createNewDoctorDTO("doc@email.com", "Doc");
+        DoctorDTO doctorDTO = TestDataFactory.createDoctorDTO("docTwo@email.com", "DocTwo");
+        when(doctorService.update(any(), any())).thenReturn(doctorDTO);
+        //when //then
+        mockMvc.perform(put("/doctors/{id}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(newDoctorDTO)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.firstName").value("DocTwo"))
+                .andExpect(jsonPath("$.lastName").value("doctorDTO"))
+                .andExpect(jsonPath("$.email").value("docTwo@email.com"))
+                .andExpect(jsonPath("$.specialization").value("surgeonDTO"));
+    }
 }
