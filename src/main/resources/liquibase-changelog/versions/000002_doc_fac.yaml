@@ -1,0 +1,96 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2
+      author: Marcin
+      changes:
+        - createTable:
+            tableName: doctor
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_doctor_id
+                  name: id
+                  type: bigint
+              - column:
+                  name: email
+                  type: varchar(50)
+                  constraints:
+                    unique: true
+                    uniqueConstraintName: uq_doctor_email
+              - column:
+                  name: password
+                  type: varchar(50)
+              - column:
+                  name: first_name
+                  type: varchar(50)
+              - column:
+                  name: last_name
+                  type: varchar(50)
+              - column:
+                  name: specialization
+                  type: varchar(50)
+  - changeSet:
+      id: 3
+      author: Marcin
+      changes:
+        - createTable:
+            tableName: facility
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_facility_id
+                  name: id
+                  type: bigint
+              - column:
+                  name: name
+                  type: varchar(50)
+                  constraints:
+                    unique: true
+                    uniqueConstraintName: uq_facility_name
+              - column:
+                  name: city
+                  type: varchar(50)
+              - column:
+                  name: zip_code
+                  type: varchar(50)
+              - column:
+                  name: street
+                  type: varchar(50)
+              - column:
+                  name: building_no
+                  type: varchar(50)
+  - changeSet:
+      id: 4
+      author: Marcin
+      changes:
+        - createTable:
+            tableName: doctor_facility
+            columns:
+              - column:
+                  name: doctor_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: facility_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: doctor_facility
+            baseColumnNames: doctor_id
+            referencedTableName: doctor
+            referencedColumnNames: id
+            constraintName: fk_doctor_facility_reference_doctor
+        - addForeignKeyConstraint:
+            baseTableName: doctor_facility
+            baseColumnNames: facility_id
+            referencedTableName: facility
+            referencedColumnNames: id
+            constraintName: fk_doctor_facility_reference_facility
