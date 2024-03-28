@@ -19,7 +19,7 @@ databaseChangeLog:
                   type: varchar(50)
                   constraints:
                     unique: true
-                    uniqueConstraintName: unique_patient_email
+                    uniqueConstraintName: uq_patient_email
               - column:
                   name: password
                   type: varchar(50)
@@ -28,7 +28,7 @@ databaseChangeLog:
                   type: varchar(50)
                   constraints:
                     unique: true
-                    uniqueConstraintName: unique_patient_id_card_no
+                    uniqueConstraintName: uq_patient_id_card_no
               - column:
                   name: first_name
                   type: varchar(50)

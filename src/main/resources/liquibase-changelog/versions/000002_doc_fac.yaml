@@ -19,7 +19,7 @@ databaseChangeLog:
                   type: varchar(50)
                   constraints:
                     unique: true
-                    uniqueConstraintName: unique_doctor_email
+                    uniqueConstraintName: uq_doctor_email
               - column:
                   name: password
                   type: varchar(50)
@@ -52,7 +52,7 @@ databaseChangeLog:
                   type: varchar(50)
                   constraints:
                     unique: true
-                    uniqueConstraintName: unique_facility_name
+                    uniqueConstraintName: uq_facility_name
               - column:
                   name: city
                   type: varchar(50)

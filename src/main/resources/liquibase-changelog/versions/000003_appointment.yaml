@@ -15,9 +15,12 @@ databaseChangeLog:
                   name: id
                   type: bigint
               - column:
+                  constraints:
                   name: patient_id
                   type: bigint
               - column:
+                  constraints:
+                    nullable: false
                   name: doctor_id
                   type: bigint
               - column:
