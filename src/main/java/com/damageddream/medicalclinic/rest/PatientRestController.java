@@ -4,6 +4,8 @@ import com.damageddream.medicalclinic.dto.ChangePasswordCommand;
 import com.damageddream.medicalclinic.dto.NewPatientDTO;
 import com.damageddream.medicalclinic.dto.PatientDTO;
 import com.damageddream.medicalclinic.service.PatientService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +18,7 @@ import java.util.List;
 public class PatientRestController {
 
     private final PatientService patientService;
-
+    @Operation(summary = "Get list of all patients")
     @GetMapping
     public List<PatientDTO> findAll() {
         return patientService.findAll();
