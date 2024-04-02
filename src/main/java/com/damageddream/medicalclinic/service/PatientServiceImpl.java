@@ -10,6 +10,9 @@ import com.damageddream.medicalclinic.exception.PatientNotFoundException;
 import com.damageddream.medicalclinic.repository.PatientRepository;
 import com.damageddream.medicalclinic.validation.DataValidator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,8 +48,8 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public List<PatientDTO> findAll() {
-        List<Patient> patients = patientRepository.findAll();
+    public List<PatientDTO> findAll(Pageable pageable) {
+        Page<Patient> patients = patientRepository.findAll(pageable);
         return patients.stream()
                 .map(patientMapper::toDTO)
                 .toList();

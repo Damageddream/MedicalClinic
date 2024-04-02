@@ -11,6 +11,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,8 +33,8 @@ public class PatientRestController {
             @ApiResponse(responseCode = "404", description = "Patients not found",
                     content = @Content)})
     @GetMapping
-    public List<PatientDTO> findAll() {
-        return patientService.findAll();
+    public List<PatientDTO> findAll(@RequestParam int page,@PageableDefault(value = 2) Pageable pageable) {
+        return patientService.findAll(pageable);
     }
 
     @Operation(summary = "Get patient by email")

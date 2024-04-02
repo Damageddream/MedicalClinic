@@ -3,6 +3,7 @@ package com.damageddream.medicalclinic.service;
 import com.damageddream.medicalclinic.dto.ChangePasswordCommand;
 import com.damageddream.medicalclinic.dto.NewPatientDTO;
 import com.damageddream.medicalclinic.dto.PatientDTO;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ public interface PatientService {
 
     PatientDTO findByEmail(String email);
 
-    List<PatientDTO> findAll();
+    List<PatientDTO> findAll(Pageable pageable);
 
     PatientDTO update(String email, NewPatientDTO patient);
 
