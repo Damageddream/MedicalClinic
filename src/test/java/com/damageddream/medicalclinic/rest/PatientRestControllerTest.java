@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.*;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -89,11 +90,13 @@ public class PatientRestControllerTest {
         PatientDTO patientDTOfirst = TestDataFactory.createPatientDTO("marDTO@email.com","MarDTO");
         PatientDTO patientDTOsecond = TestDataFactory.createPatientDTO("lesz@mail.com", "Leszek");
         List<PatientDTO> patientsDTO = List.of(patientDTOfirst, patientDTOsecond);
+        Pageable pageable = PageRequest.of(0, 2,
+                Sort.by(Sort.Direction.ASC, "firstName"));
 
-        when(patientService.findAll()).thenReturn(patientsDTO);
+        when(patientService.findAll(any())).thenReturn(patientsDTO);
 
         //when then
-        mockMvc.perform(get("/patients"))
+        mockMvc.perform(get("/patients?page=0"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.hasSize(2)))
@@ -102,7 +105,7 @@ public class PatientRestControllerTest {
                 .andExpect(jsonPath("$[1].firstName").value("Leszek"))
                 .andExpect(jsonPath("$[1].email").value("lesz@mail.com"));
 
-        verify(patientService, times(1)).findAll();
+        verify(patientService, times(1)).findAll(pageable);
     }
 
     @Test

@@ -57,7 +57,7 @@ public class PatientIntegrationTest {
 
     @Test
     void getAllPatients_patientsExists_responseListPatientsDto() throws Exception {
-        mockMvc.perform(get("/patients"))
+        mockMvc.perform(get("/patients?page=0"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.hasSize(2)))

@@ -5,6 +5,7 @@ import com.damageddream.medicalclinic.dto.NewPatientDTO;
 import com.damageddream.medicalclinic.dto.PatientDTO;
 import com.damageddream.medicalclinic.service.PatientService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -12,7 +13,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,8 +35,14 @@ public class PatientRestController {
                             array = @ArraySchema(schema = @Schema(implementation = PatientDTO.class)))}),
             @ApiResponse(responseCode = "404", description = "Patients not found",
                     content = @Content)})
+    @Parameter(name = "page", description = "Page number to retrieve (0-indexed)")
+    @Parameter(name = "size", description = "Number of records per page, default value 2")
+    @Parameter(name = "sort", description = "Sorting criteria in the format: property(,asc|desc). " +
+            "Default sort order is ascending. Multiple sort criteria are supported.")
     @GetMapping
-    public List<PatientDTO> findAll(@RequestParam int page,@PageableDefault(value = 2) Pageable pageable) {
+    public List<PatientDTO> findAll(@RequestParam int page,
+                                    @PageableDefault(value = 2)
+                                    @SortDefault(sort = "firstName", direction = Sort.Direction.ASC) Pageable pageable) {
         return patientService.findAll(pageable);
     }
 
