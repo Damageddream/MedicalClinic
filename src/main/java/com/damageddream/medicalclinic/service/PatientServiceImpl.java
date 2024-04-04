@@ -45,6 +45,13 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
+    public PatientDTO findPatientById(Long id) {
+        Patient patient = patientRepository.findById(id)
+                .orElseThrow(() -> new PatientNotFoundException("Patient not found"));
+        return patientMapper.toDTO(patient);
+    }
+
+    @Override
     public List<PatientDTO> findAll() {
         List<Patient> patients = patientRepository.findAll();
         return patients.stream()

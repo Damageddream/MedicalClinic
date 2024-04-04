@@ -35,6 +35,19 @@ public class PatientRestController {
         return patientService.findAll();
     }
 
+    @Operation(summary = "Get patient by id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Found the patient",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = PatientDTO.class))}),
+            @ApiResponse(responseCode = "404", description = "Patient not found",
+                    content = @Content)
+    })
+    @GetMapping("/id/{id}")
+    public PatientDTO getPatientById(@PathVariable Long id) {
+        return patientService.findPatientById(id);
+    }
+
     @Operation(summary = "Get patient by email")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Found the patient",

@@ -19,4 +19,6 @@ public interface PatientService {
 
     PatientDTO editPassword(ChangePasswordCommand password, String email);
 
+    PatientDTO findPatientById(Long id);
+
 }
