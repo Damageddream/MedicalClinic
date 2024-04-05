@@ -2,6 +2,7 @@ package com.damageddream.medicalclinic.rest;
 
 import com.damageddream.medicalclinic.dto.AppointmentDTO;
 import com.damageddream.medicalclinic.dto.GetIdCommand;
+import com.damageddream.medicalclinic.dto.PatientDTO;
 import com.damageddream.medicalclinic.entity.Appointment;
 import com.damageddream.medicalclinic.service.AppointmentService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,9 +13,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -100,5 +103,11 @@ public class AppointmentRestController {
     public List<AppointmentDTO> getAppointments(@Parameter(description = "Filter for only available appointments",
             required = false) @RequestParam Boolean onlyFree) {
         return appointmentService.getAppointments(onlyFree);
+    }
+
+    @GetMapping("/patients")
+    public List<PatientDTO> getPatientsByAppointmentsDate(
+            @RequestParam("appointmentDate") String appointmentDate){
+        return appointmentService.getPatientByAppointmentDate(appointmentDate);
     }
 }

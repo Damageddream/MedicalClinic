@@ -3,6 +3,7 @@ package com.damageddream.medicalclinic.service;
 import com.damageddream.medicalclinic.dto.AppointmentDTO;
 import com.damageddream.medicalclinic.dto.GetIdCommand;
 import com.damageddream.medicalclinic.dto.mapper.AppointmentMapper;
+import com.damageddream.medicalclinic.dto.mapper.PatientMapper;
 import com.damageddream.medicalclinic.entity.Appointment;
 import com.damageddream.medicalclinic.entity.Doctor;
 import com.damageddream.medicalclinic.entity.Patient;
@@ -30,6 +31,7 @@ import static org.mockito.Mockito.when;
 
 public class AppointmentServiceTest {
     private AppointmentMapper appointmentMapper;
+    private PatientMapper patientMapper;
     private DoctorRepository doctorRepository;
     private PatientRepository patientRepository;
     private AppointmentRepository appointmentRepository;
@@ -39,13 +41,14 @@ public class AppointmentServiceTest {
     @BeforeEach
     void setup() {
         this.appointmentMapper = Mockito.mock(AppointmentMapper.class);
+        this.patientMapper = Mockito.mock(PatientMapper.class);
         this.doctorRepository = Mockito.mock(DoctorRepository.class);
         this.patientRepository = Mockito.mock(PatientRepository.class);
         this.appointmentRepository = Mockito.mock(AppointmentRepository.class);
         this.dataValidator = Mockito.mock(DataValidator.class);
 
-        this.appointmentService = new AppointmentServiceImpl(appointmentMapper, patientRepository,
-                doctorRepository, appointmentRepository, dataValidator);
+        this.appointmentService = new AppointmentServiceImpl(appointmentMapper, patientMapper,
+                patientRepository, doctorRepository, appointmentRepository, dataValidator);
     }
 
     @Test

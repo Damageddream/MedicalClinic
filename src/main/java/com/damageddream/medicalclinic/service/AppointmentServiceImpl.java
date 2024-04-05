@@ -2,7 +2,9 @@ package com.damageddream.medicalclinic.service;
 
 import com.damageddream.medicalclinic.dto.AppointmentDTO;
 import com.damageddream.medicalclinic.dto.GetIdCommand;
+import com.damageddream.medicalclinic.dto.PatientDTO;
 import com.damageddream.medicalclinic.dto.mapper.AppointmentMapper;
+import com.damageddream.medicalclinic.dto.mapper.PatientMapper;
 import com.damageddream.medicalclinic.entity.Appointment;
 import com.damageddream.medicalclinic.entity.Doctor;
 import com.damageddream.medicalclinic.entity.Patient;
@@ -18,13 +20,20 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 public class AppointmentServiceImpl implements AppointmentService {
 
     private final AppointmentMapper appointmentMapper;
+    private final PatientMapper patientMapper;
     private final PatientRepository patientRepository;
     private final DoctorRepository doctorRepository;
     private final AppointmentRepository appointmentRepository;
@@ -97,4 +106,31 @@ public class AppointmentServiceImpl implements AppointmentService {
         return appointments.stream().map(appointmentMapper::toDTO).toList();
     }
 
+    @Override
+    public List<PatientDTO> getPatientByAppointmentDate(String appointmentDate) {
+        LocalDateTime parsedDate = null;
+        try{
+            parsedDate = LocalDate.parse(appointmentDate, DateTimeFormatter.ISO_DATE).atStartOfDay();
+        } catch (DateTimeParseException e){
+            throw new InvalidDateTimeException("Passed date is not valid date type");
+        }
+
+        LocalDateTime endDate = parsedDate.plusDays(1);
+
+        List<Appointment> appointments = appointmentRepository
+                .findByAppointmentStartGreaterThanEqualAndAppointmentStartLessThan(parsedDate, endDate);
+
+        if(appointments.isEmpty()){
+            throw new AppointmentNotFoundException("There are no appointments at that date");
+        }
+
+        Set<Patient> distinctPatients = new HashSet<>();
+        for (Appointment appointment : appointments) {
+            distinctPatients.add(appointment.getPatient());
+        }
+
+        return distinctPatients.stream()
+                .map(patientMapper::toDTO)
+                .toList();
+    }
 }
