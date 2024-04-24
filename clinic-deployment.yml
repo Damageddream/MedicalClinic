@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clinic
+spec:
+  selector:
+    matchLabels:
+      app: clinic
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: clinic
+    spec:
+      containers:
+        - name: clinic-image
+          image: medical-clinic:0.0.1
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://postgres-service:5432/postgres
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: password
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: username
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: clinic-service
+spec:
+  selector:
+    app: clinic
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30000
